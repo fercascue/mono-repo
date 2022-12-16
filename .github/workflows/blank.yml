@@ -26,12 +26,6 @@ jobs:
     needs: changes
     if: ${{ needs.changes.outputs.names != '[]' }}
     name:  ${{matrix.name}}
-    runs-on: ubuntu-latest
-    strategy:
-      max-parallel: 1
-      matrix:
-         name: ${{ fromJSON(needs.changes.outputs.names) }}
-      
     defaults:
       run:
         shell: bash
