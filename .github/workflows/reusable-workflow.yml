@@ -1,0 +1,102 @@
+name: reusable workflow
+
+on:
+  workflow_call:
+    inputs:
+      stage:
+        required: true
+        type: string
+      resource:  
+        required: true
+        type: string
+    #secrets:
+    #  AWS_ACCESS_KEY_ID:
+    #    required: true
+    #  AWS_SECRET_ACCESS_KEY:
+    #    required: true
+
+jobs:
+  build-and-deploy-to-dev:
+    name: Deploy to ${{ inputs.stage }}
+    runs-on: ubuntu-latest
+    if: ${{ inputs.stage == 'dev' }}
+    steps:
+     - name: Deploy project from ${{ github.head_ref }} to DEV ${{ github.base_ref }} ${{ github.head_ref }}
+       run: echo Deploy del proyecto en el entorno de ${{ inputs.stage }}
+  build-and-deploy-to-pre:
+    name: Deploy to ${{ inputs.stage }}
+    runs-on: ubuntu-latest
+    if: ${{ inputs.stage == 'pre' }}
+    steps:
+     - name: Deploy project from ${{ github.head_ref }} to DEV ${{ github.base_ref }} ${{ github.head_ref }}
+       run: echo Deploy del proyecto en el entorno de ${{ inputs.stage }}
+  build-and-deploy-to-pro:
+    name: Deploy to ${{ inputs.stage }}
+    runs-on: ubuntu-latest
+    if: ${{ inputs.stage == 'pro' }}
+    steps:
+     - name: Deploy project from ${{ github.head_ref }} to DEV ${{ github.base_ref }} ${{ github.head_ref }}
+       run: echo Deploy del proyecto en el entorno de ${{ inputs.stage }}
+  merge-release-back-to-dev:
+  #  #if: github.event.pull_request.merged == true
+    timeout-minutes: 2
+    needs: deploy-to-pre
+    runs-on: ubuntu-latest
+    steps: 
+     - name: Merge from ${{ github.base_ref }} #${{ github.base_ref }} ${{ github.head_ref }}
+       run: echo Deploy proyect release
+     - uses: actions/checkout@v2
+     - name: Set Git config
+       run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "Github Actions"
+     - name: Merge release back to dev
+       run: |
+          git fetch --unshallow
+          git checkout develop
+          git pull
+          git merge --no-ff ${{ github.base_ref }} -m "Auto-merge relese back to dev"
+          git push 
+  
+  merge-master-back-to-dev:
+    #if: github.event.pull_request.merged == true
+    timeout-minutes: 2
+    needs: deploy-to-pro
+    runs-on: ubuntu-latest
+    steps: 
+     - name: Merge from ${{ github.head_ref }} #${{ github.base_ref }} ${{ github.head_ref }}
+       run: echo Deploy proyect release
+     - uses: actions/checkout@v2
+     - name: Set Git config
+       run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "Github Actions"
+     - name: Merge master back to dev
+       run: |
+          git fetch --unshallow
+          git checkout develop
+          git pull
+          git merge --no-ff origin/main -m "Auto-merge master back to dev"
+          git push 
+  #deploy-to-pre:
+  #  name: deploy
+  #  runs-on: ubuntu-latest
+  #  strategy:
+  #    matrix:
+  #      node-version: [14.x]
+  #  steps:
+  #    - uses: actions/checkout@v2
+  #    - name: Use Node.js ${{ matrix.node-version }}
+  #      uses: actions/setup-node@v1
+  #      with:
+  #        node-version: ${{ matrix.node-version }}
+  #    - run: npm ci
+  #    - run: npm run test
+  #      if: ${{ inputs.stage == 'prod' }}
+  #    - name: serverless deploy
+  #      uses: serverless/github-action@v3
+  #      with:
+  #        args: deploy --stage ${{ inputs.stage }}
+  #      env:
+  #        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

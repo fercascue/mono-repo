@@ -22,7 +22,7 @@ jobs:
             - 'lambda1/**'
           lambda2:
             - 'lambda2/**'
-  deploy:
+  activate-workflow:
     needs: changes
     if: ${{ needs.changes.outputs.names != '[]' }}
     name:  ${{matrix.name}}
@@ -36,8 +36,7 @@ jobs:
       run:
         shell: bash
         working-directory: ${{ matrix.name }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: Checking the folder name
-        run: |
-         echo "Running for folder ${{ matrix.name }}"
+    uses: ./.github/workflows/reusable-workflow.yml
+    with:
+      stage: dev
+      resource: ${{ matrix.name }} 
