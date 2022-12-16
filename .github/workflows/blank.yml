@@ -18,10 +18,10 @@ jobs:
       id: filter
       with:
         filters: |
-          folder-1:
-            - 'folder-1/**'
-          folder-2:
-            - 'folder-2/**'
+          lambda1:
+            - 'lambda1/**'
+          lambda2:
+            - 'lambda2/**'
   deploy:
     needs: changes
     if: ${{ needs.changes.outputs.names != '[]' }}
