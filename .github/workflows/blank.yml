@@ -25,8 +25,19 @@ jobs:
   activate-workflow:
     needs: changes
     if: ${{ needs.changes.outputs.names != '[]' }}
-    name:  ${{matrix.name}}
-    uses: ./.github/workflows/reusable-workflow.yml
-    with:
-      stage: dev
-      resource: ${{ matrix.name }} 
+    name:  ${{matrix.name}} - ${{ matrix.environment }}
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 1
+      matrix:
+         name: ${{ fromJSON(needs.changes.outputs.names) }}
+         environment: [ test,prod]
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ matrix.name }}
+    steps:
+      - uses: ./.github/workflows/reusable-workflow.yml
+        with:
+          stage: dev
+          resource: ${{ matrix.name }} 
