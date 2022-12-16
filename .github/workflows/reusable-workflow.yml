@@ -25,6 +25,10 @@ jobs:
         shell: bash
         working-directory: ${{ matrix.name }}
     steps:
+     - uses: actions/checkout@v2
+     - name: Checking the folder name
+        run: |
+         echo "Running for folder ${{ matrix.name }}"
      - name: Deploy project from ${{ github.head_ref }} to DEV ${{ github.base_ref }} ${{ github.head_ref }}
        run: echo Deploy del proyecto en el entorno de ${{ inputs.stage }}
   build-and-deploy-to-pre:

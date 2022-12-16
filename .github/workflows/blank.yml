@@ -32,10 +32,7 @@ jobs:
       matrix:
          name: ${{ fromJSON(needs.changes.outputs.names) }}
          environment: [ test,prod]
-    defaults:
-      run:
-        shell: bash
-        working-directory: ${{ matrix.name }}
+    
     steps:
       - uses: ./.github/workflows/reusable-workflow.yml
         with:
