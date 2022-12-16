@@ -26,10 +26,6 @@ jobs:
     needs: changes
     if: ${{ needs.changes.outputs.names != '[]' }}
     name:  ${{matrix.name}}
-    defaults:
-      run:
-        shell: bash
-        working-directory: ${{ matrix.name }}
     uses: ./.github/workflows/reusable-workflow.yml
     with:
       stage: dev
