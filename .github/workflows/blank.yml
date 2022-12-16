@@ -31,7 +31,7 @@ jobs:
       max-parallel: 1
       matrix:
          name: ${{ fromJSON(needs.changes.outputs.names) }}
-         environment: [ test,prod]
+      
     defaults:
       run:
         shell: bash
