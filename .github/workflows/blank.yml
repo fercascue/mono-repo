@@ -1,54 +1,43 @@
-# This is a basic workflow to help you get started with Actions
-
-name: CI
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
-  pull_request:
-    branches: [ main ]
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+  push:
+    branches:
+      - main
+    paths:
+      - 'lambda1/**'
+      - 'lambda2/**'
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  changes:
+    name: Detect Changes in folder
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    outputs:
+      names: ${{ steps.filter.outputs.changes }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Detect Changes
+      uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          folder-1:
+            - 'folder-1/**'
+          folder-2:
+            - 'folder-2/**'
+  deploy:
+    needs: changes
+    if: ${{ needs.changes.outputs.names != '[]' }}
+    name:  ${{matrix.name}} - ${{ matrix.environment }}
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 1
+      matrix:
+         name: ${{ fromJSON(needs.changes.outputs.names) }}
+         environment: [ test,prod]
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ matrix.name }}
     steps:
       - uses: actions/checkout@v2
-
-      - name: Get Current Pull Request
-        uses: 8BitJonny/gh-get-current-pr@1.0.1
-        id: pr
-        with:
-          github-token: $
-          filterOutClosed: true
-
-      - id: file_changes
-        name: File Changes
-        uses: trilom/file-changes-action@v1.2.3
-        with:
-          prNumber: $
-          pushBefore: ''
-          pushAfter: ''
-
-      - name: Ouput File Changes
-        run: echo '$'
-
-      # Runs a single command using the runners shell
-      - name: Run one "build"
-        run: echo Hello, one!
-        if: contains(steps.file_changes.outputs.files , '"one/')
-
-      - name: Run two "build"
-        if: contains(steps.file_changes.outputs.files , '"two/')
-        run: echo Hello, two!
-
-      - name: Run three "build"
-        if: contains(steps.file_changes.outputs.files , '"three/')
-        run: echo Hello, three!
+      - name: Checking the folder name
+        run: |
+         echo "Running for folder ${{ matrix.name }}"
