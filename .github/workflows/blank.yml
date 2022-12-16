@@ -22,15 +22,35 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
+
+      - name: Get Current Pull Request
+        uses: 8BitJonny/gh-get-current-pr@1.0.1
+        id: pr
+        with:
+          github-token: $
+          filterOutClosed: true
+
+      - id: file_changes
+        name: File Changes
+        uses: trilom/file-changes-action@v1.2.3
+        with:
+          prNumber: $
+          pushBefore: ''
+          pushAfter: ''
+
+      - name: Ouput File Changes
+        run: echo '$'
 
       # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
+      - name: Run one "build"
+        run: echo Hello, one!
+        if: contains(steps.file_changes.outputs.files , '"one/')
 
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+      - name: Run two "build"
+        if: contains(steps.file_changes.outputs.files , '"two/')
+        run: echo Hello, two!
+
+      - name: Run three "build"
+        if: contains(steps.file_changes.outputs.files , '"three/')
+        run: echo Hello, three!
