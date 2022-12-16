@@ -20,6 +20,10 @@ jobs:
     name: Deploy to ${{ inputs.stage }}
     runs-on: ubuntu-latest
     if: ${{ inputs.stage == 'dev' }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ matrix.name }}
     steps:
      - name: Deploy project from ${{ github.head_ref }} to DEV ${{ github.base_ref }} ${{ github.head_ref }}
        run: echo Deploy del proyecto en el entorno de ${{ inputs.stage }}
