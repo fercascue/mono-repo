@@ -28,7 +28,7 @@ jobs:
     if: ${{ needs.changes.outputs.names != '[]' }}
     steps:
      - name: Print output selected
-       run: echo values selected- ${{ (needs.changes.outputs.names) }} 
+       run: echo values selected- ${{ fromJSON(needs.changes.outputs.names) }} 
 
   activate-workflow:
     needs: changes
@@ -41,4 +41,4 @@ jobs:
     uses: ./.github/workflows/reusable-workflow.yml
     with:
       stage: dev
-      resource: ${{ matrix.workflow }}
+      resource: ${{ fromJSON(matrix.workflow ) }} 
