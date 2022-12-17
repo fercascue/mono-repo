@@ -24,6 +24,7 @@ jobs:
             - 'lambda2/**'
   print-output:
     needs: changes
+    runs-on: ubuntu-latest
     if: ${{ needs.changes.outputs.names != '[]' }}
     steps:
      - name: Print output selected
