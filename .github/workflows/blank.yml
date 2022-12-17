@@ -36,9 +36,8 @@ jobs:
     name:  ${{matrix.name}} - ${{ matrix.environment }}
     strategy:
       matrix:
-        #workflow: ${{ (needs.changes.outputs.names) }}
-        workflow: ["lambda1", "lambda2"]
+        workflow: ${{ fromJSON(needs.changes.outputs.names) }}
     uses: ./.github/workflows/reusable-workflow.yml
     with:
       stage: dev
-      resource: ${{ fromJSON(matrix.workflow ) }} 
+      resource: ${{ (matrix.workflow ) }} 
