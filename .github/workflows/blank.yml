@@ -35,9 +35,8 @@ jobs:
     if: ${{ needs.changes.outputs.names != '[]' }}
     name:  ${{matrix.name}} - ${{ matrix.environment }}
     strategy:
-      max-parallel: 1
       matrix:
-         workflow: ${{ (needs.changes.outputs.names) }}
+        workflow: ${{ (needs.changes.outputs.names) }}
     uses: ./.github/workflows/reusable-workflow.yml
     with:
       stage: dev
