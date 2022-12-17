@@ -17,7 +17,7 @@ on:
 
 jobs:
   build-and-deploy-to-dev:
-    name: Deploy to ${{ inputs.stage }}
+    name: Deploy to ${{ inputs.stage }} the lambda function ${{ inputs.resource }}
     runs-on: ubuntu-latest
     if: ${{ inputs.stage == 'dev' }}
     defaults:
