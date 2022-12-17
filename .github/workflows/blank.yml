@@ -33,7 +33,7 @@ jobs:
   activate-workflow:
     needs: changes
     if: ${{ needs.changes.outputs.names != '[]' }}
-    name:  ${{matrix.name}} - ${{ matrix.environment }}
+    name:  Deploying lambda(s) funtion(s) ${{ (matrix.workflow ) }}  
     strategy:
       matrix:
         workflow: ${{ fromJSON(needs.changes.outputs.names) }}
