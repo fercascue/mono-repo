@@ -26,9 +26,44 @@ jobs:
         working-directory: ${{ inputs.resource }}
     steps:
      - uses: actions/checkout@v2
-     - name: Checking the folder name
+     - name: Checkout folder source code
        run: |
-         echo "Running for folder ${{ inputs.resource }}"
+         echo "Checkout folder ${{ inputs.resource }}"
+     
+     - name: Configure AWS credentials
+       run: echo Configuring AWS credentials
+
+     - name: Setup jdk
+        uses: actions/setup-java@de1bb2b0c5634f0fc4438d7aa9944e68f9bf86cc
+        with:
+          java-version: ${{ inputs.java-version }}
+          distribution: 'adopt'
+          cache: maven
+
+     - name: Build with Maven
+       run: mvn clean install ${{ inputs.maven-params }} --file pom.xml     
+  
+     - name: Set project version as environment variable
+        run: echo "PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+     
+     - name: Print debug info
+        run: |
+          echo working_directory is ${{ inputs.resource }}
+          echo project version is ${{ env.PROJECT_VERSION }}
+          echo java-version is ${{ inputs.java-version }}  
+
+     - name: Build and tag  
+       id: build-image
+       env:
+          IMAGE_TAG: ${{ env.PROJECT_VERSION }}
+       run: docker build -t docker-java-jar:$IMAGE_TAG .
+
+     - name: Push image to AWS ECR 
+       run: echo Push image to AWS ECR
+
+      name: Scan ECR image with Trivy vulnerability scanner
+      run: echo Scan ECR image with Trivy vulnerability scanner
+      
      - name: Deploy project from ${{ github.head_ref }} to DEV ${{ github.base_ref }} ${{ github.head_ref }}
        run: echo Deploy del proyecto en el entorno de ${{ inputs.stage }}
   build-and-deploy-to-pre:

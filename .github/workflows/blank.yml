@@ -22,15 +22,7 @@ jobs:
             - 'lambda1/**'
           lambda2:
             - 'lambda2/**'
-  print-output:
-    needs: changes
-    runs-on: ubuntu-latest
-    if: ${{ needs.changes.outputs.names != '[]' }}
-    steps:
-     - name: Print output selected
-       run: echo values selected- ${{ fromJSON(needs.changes.outputs.names) }} 
-
-  activate-workflow:
+   activate-workflow:
     needs: changes
     if: ${{ needs.changes.outputs.names != '[]' }}
     name:  Deploying lambda(s) funtion(s) ${{ (matrix.workflow ) }}  
