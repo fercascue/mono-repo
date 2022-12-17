@@ -23,7 +23,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ${{ matrix.name }}
+        working-directory: ${{ inputs.resource }}
     steps:
      - uses: actions/checkout@v2
      - name: Checking the folder name
