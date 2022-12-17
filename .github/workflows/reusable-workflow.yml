@@ -34,11 +34,11 @@ jobs:
        run: echo Configuring AWS credentials
 
      - name: Setup jdk
-        uses: actions/setup-java@de1bb2b0c5634f0fc4438d7aa9944e68f9bf86cc
-        with:
-          java-version: ${{ inputs.java-version }}
-          distribution: 'adopt'
-          cache: maven
+       uses: actions/setup-java@de1bb2b0c5634f0fc4438d7aa9944e68f9bf86cc
+       with:
+         java-version: ${{ inputs.java-version }}
+         distribution: 'adopt'
+         cache: maven
 
      - name: Build with Maven
        run: mvn clean install ${{ inputs.maven-params }} --file pom.xml     
@@ -63,7 +63,7 @@ jobs:
 
       name: Scan ECR image with Trivy vulnerability scanner
       run: echo Scan ECR image with Trivy vulnerability scanner
-      
+
      - name: Deploy project from ${{ github.head_ref }} to DEV ${{ github.base_ref }} ${{ github.head_ref }}
        run: echo Deploy del proyecto en el entorno de ${{ inputs.stage }}
   build-and-deploy-to-pre:
