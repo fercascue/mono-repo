@@ -26,15 +26,11 @@ jobs:
     needs: changes
     if: ${{ needs.changes.outputs.names != '[]' }}
     name:  ${{matrix.name}} - ${{ matrix.environment }}
-    runs-on: ubuntu-latest
     strategy:
       max-parallel: 1
       matrix:
-         name: ${{ fromJSON(needs.changes.outputs.names) }}
-         environment: [ test,prod]
-    
-    steps:
-      - uses: ./.github/workflows/reusable-workflow.yml
-        with:
-          stage: dev
-          resource: ${{ matrix.name }} 
+         workflow: ${{ fromJSON(needs.changes.outputs.names) }}
+    uses: ./.github/workflows/reusable-workflow.yml
+    with:
+      stage: dev
+      target: ${{ matrix.workflow }}
