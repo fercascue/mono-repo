@@ -37,7 +37,7 @@ jobs:
     strategy:
       matrix:
         #workflow: ${{ (needs.changes.outputs.names) }}
-        workflow: ['lambda1', 'lambda2']
+        workflow: ["lambda1", "lambda2"]
     uses: ./.github/workflows/reusable-workflow.yml
     with:
       stage: dev
