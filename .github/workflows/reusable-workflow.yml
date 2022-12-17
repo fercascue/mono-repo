@@ -9,6 +9,15 @@ on:
       resource:  
         required: false
         type: string
+      java-version:
+        required: false
+        type: string
+        default: '11'
+      # allowing calling workflows to pass in maven parameter(s) such as '-Dmaven.test.skip' for certain apps, default to blank, not to skip test
+      maven-params:
+        required: false
+        type: string
+        default: ''  
     #secrets:
     #  AWS_ACCESS_KEY_ID:
     #    required: true
