@@ -28,7 +28,7 @@ jobs:
     if: ${{ needs.changes.outputs.names != '[]' }}
     steps:
      - name: Print output selected
-       run: echo values selected- ${{ fromJSON(needs.changes.outputs.names) }} 
+       run: echo values selected- ${{ (needs.changes.outputs.names) }} 
 
   activate-workflow:
     needs: changes
