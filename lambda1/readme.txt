@@ -1,1 +1,1 @@
-foo bar lorem ipsum 1 2
+foo bar lorem ipsum 1 2 A 
