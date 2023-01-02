@@ -2,6 +2,7 @@ name: reusable workflow
 
 on:
   workflow_call:
+    inputs:
       stage:
         required: true
         type: string
