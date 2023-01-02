@@ -49,7 +49,7 @@ jobs:
        run: mvn clean install ${{ inputs.maven-params }} --file pom.xml   
 
      - name: print folder
-       run: ls -la      
+       run: ls -la ./target     
   
   build-image-layer:
     name: Deploy layer ${{ inputs.stage }} the lambda function ${{ inputs.resource }}
