@@ -49,6 +49,22 @@ jobs:
 
      - name: Build with Maven
        run: mvn clean install ${{ inputs.maven-params }} --file pom.xml     
+  
+   build-image-layer:
+    name: Deploy layer ${{ inputs.stage }} the lambda function ${{ inputs.resource }}
+    needs: build-project
+    if: ${{ github.ref_name == 'develop' }} && contains(${{ inputs.resource }}, 'lambda1') 
+    runs-on: ubuntu-latest
+    steps:
+     - run: echo Build image layer 
+     - name: Set project version as environment variable
+       run: echo "PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+     
+     - name: Print debug info
+       run: |
+          echo working_directory is ${{ inputs.resource }}
+          echo project version is ${{ env.PROJECT_VERSION }}
+
 
   build-image:
     name: Deploy ${{ inputs.stage }} the lambda function ${{ inputs.resource }}
