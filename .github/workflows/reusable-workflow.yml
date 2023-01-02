@@ -31,8 +31,8 @@ jobs:
   set-vars: 
     name: Configuration for beta branch
     if: contains(inputs.resource , 'lambda1')
-    run: |
-      echo "IS_LAYER=true" >> $GITHUB_ENV
+    steps:
+      run: echo "IS_LAYER=true" >> $GITHUB_ENV
   
   build-project:
     name: Build ${{ inputs.stage }} the lambda function ${{ inputs.resource }}
