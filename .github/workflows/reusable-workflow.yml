@@ -42,6 +42,7 @@ jobs:
 
   build-lambda-project:
     name: Build ${{ inputs.stage }} the lambda function ${{ inputs.resource }}
+    needs: lint-codebase
     runs-on: ubuntu-latest
     if: ${{ inputs.resource != 'layer' }}
     defaults:
@@ -68,7 +69,7 @@ jobs:
   
   build-layer-project:
     name: Deploy layer ${{ inputs.stage }} from ${{ inputs.resource }}
-    needs: build-lambda-project
+    needs: lint-codebase
     if: ${{ inputs.resource == 'layer' }} 
     runs-on: ubuntu-latest
     steps:
