@@ -53,7 +53,7 @@ jobs:
   build-image-layer:
     name: Deploy layer ${{ inputs.stage }} the lambda function ${{ inputs.resource }}
     needs: build-project
-    if: contains(${{ inputs.resource }}, 'layer') 
+    if: contains(inputs.resource , 'layer') 
     runs-on: ubuntu-latest
     steps:
      - run: echo Build image layer 
