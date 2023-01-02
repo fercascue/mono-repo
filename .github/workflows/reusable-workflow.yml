@@ -56,4 +56,12 @@ jobs:
     if: ${{ github.ref_name == 'develop' }} 
     runs-on: ubuntu-latest
     steps:
-     - run: echo Build image 
+     - run: echo Build image
+     - name: Set project version as environment variable
+       run: echo "PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+     
+     - name: Print debug info
+       run: |
+          echo working_directory is ${{ inputs.resource }}
+          echo project version is ${{ env.PROJECT_VERSION }}
+        
