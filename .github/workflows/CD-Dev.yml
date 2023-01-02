@@ -60,7 +60,7 @@ on:
       - 'lambda2/**'
 jobs:
   changes:
-    name: Detect Changes in folder ${{ github.base_ref }} ${{ github.head_ref }}
+    name: Detect Changes in folder
     runs-on: ubuntu-latest
     outputs:
       names: ${{ steps.filter.outputs.changes }}
@@ -180,6 +180,6 @@ jobs:
     uses: ./.github/workflows/reusable-workflow.yml
     with:
       stage: dev
-      action: build
+      action: deploy
       resource: ${{ (matrix.workflow ) }} 
 
