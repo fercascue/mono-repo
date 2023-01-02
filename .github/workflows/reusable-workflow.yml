@@ -28,14 +28,6 @@ on:
     #    required: true
 
 jobs:
-  set-vars: 
-    name: Configuration 
-    if: contains(inputs.resource , 'lambda1')
-    runs-on: ubuntu-latest
-    steps:
-     - run: echo "IS_LAYER=true" >> $GITHUB_ENV
-      
-  
   build-project:
     name: Build ${{ inputs.stage }} the lambda function ${{ inputs.resource }}
     runs-on: ubuntu-latest
@@ -61,7 +53,7 @@ jobs:
   build-image-layer:
     name: Deploy layer ${{ inputs.stage }} the lambda function ${{ inputs.resource }}
     needs: build-project
-    if: ${{ env.IS_LAYER == 'true' }} && ${{ github.ref_name == 'develop' }} 
+    if: ${{ inputs.resource == 'layer' } && ${github.ref_name == 'develop' } }
     runs-on: ubuntu-latest
     steps:
      - run: echo Build image layer 
