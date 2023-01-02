@@ -53,7 +53,7 @@ jobs:
   build-image-layer:
     name: Deploy layer ${{ inputs.stage }} the lambda function ${{ inputs.resource }}
     needs: build-project
-    if: ${{ github.ref_name == 'develop' }} && contains(inputs.resource, 'lambda1') 
+    if: ${{ github.ref_name == 'develop' } && contains(inputs.resource, 'lambda1') } 
     runs-on: ubuntu-latest
     steps:
      - run: echo Build image layer 
