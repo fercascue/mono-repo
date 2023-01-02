@@ -37,10 +37,9 @@ jobs:
         working-directory: ${{ inputs.resource }}  
     steps:
      - uses: actions/checkout@v2
-     - name: Checkout folder source code
+     - name: Checkout folder source code from ${{ github.ref_name }} for the event ${{ github.event_name }}
        run: |
          echo "Checkout folder ${{ inputs.resource }}"
-     - run: echo ${{ github.base_ref }} ${{ github.head_ref }}
      - name: Setup jdk
        uses: actions/setup-java@de1bb2b0c5634f0fc4438d7aa9944e68f9bf86cc
        with:
