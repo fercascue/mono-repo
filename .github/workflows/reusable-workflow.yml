@@ -46,7 +46,10 @@ jobs:
          cache: maven
 
      - name: Build with Maven
-       run: mvn clean install ${{ inputs.maven-params }} --file pom.xml     
+       run: mvn clean install ${{ inputs.maven-params }} --file pom.xml   
+
+     - name: print folder
+       run: ls -la      
   
   build-image-layer:
     name: Deploy layer ${{ inputs.stage }} the lambda function ${{ inputs.resource }}
