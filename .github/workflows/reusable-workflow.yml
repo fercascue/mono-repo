@@ -29,8 +29,8 @@ on:
 
 jobs:
   set-vars: 
-   name: Configuration for beta branch
-   if: contains(inputs.resource , 'lambda1')
+    name: Configuration for beta branch
+    if: contains(inputs.resource , 'lambda1')
     run: |
       echo "IS_LAYER=true" >> $GITHUB_ENV
   
