@@ -164,38 +164,6 @@ jobs:
           update-streepmap:
             - 'update-streepmap/**'
 
-<<<<<<< HEAD
-      - name: Get Current Pull Request
-        uses: 8BitJonny/gh-get-current-pr@1.0.1
-        id: pr
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          filterOutClosed: true
-
-      - id: file_changes
-        name: File Changes
-        uses: trilom/file-changes-action@v1.2.3
-        with:
-          prNumber: $
-          pushBefore: ''
-          pushAfter: ''
-
-      - name: Ouput File Changes
-        run: echo '$'
-
-      # Runs a single command using the runners shell
-      - name: Run one "build"
-        run: echo Hello, one!
-        if: contains(steps.file_changes.outputs.files , '"one/')
-
-      - name: Run two "build"
-        if: contains(steps.file_changes.outputs.files , '"two/')
-        run: echo Hello, two!
-
-      - name: Run three "build"
-        if: contains(steps.file_changes.outputs.files , '"three/')
-        run: echo Hello, three!
-=======
   activate-workflow:
     needs: changes
     if: ${{ needs.changes.outputs.names != '[]' }}
@@ -207,4 +175,4 @@ jobs:
     with:
       stage: dev
       resource: ${{ (matrix.workflow ) }} 
->>>>>>> 0101ac83b0ef3c2036485ca16e4522411a02a614
+
