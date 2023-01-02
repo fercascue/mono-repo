@@ -33,8 +33,7 @@ jobs:
     if: contains(inputs.resource , 'lambda1')
     runs-on: ubuntu-latest
     steps:
-     - name: Set values
-      run: echo "IS_LAYER=true" >> $GITHUB_ENV
+     - run: echo "IS_LAYER=true" >> $GITHUB_ENV
       
   
   build-project:
