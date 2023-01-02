@@ -1,7 +1,13 @@
 on:
+  pull_request:
+    types: 
+      - closed
+    branches:
+      - develop
   push:
     branches:
-      - main
+      - "feature*"
+    
     paths:
       - 'addresses/**'
       - 'admin-notification/**'
