@@ -164,19 +164,7 @@ jobs:
           update-streepmap:
             - 'update-streepmap/**'
 
-<<<<<<< HEAD
-  activate-workflow:
-    needs: changes
-    if: ${{ needs.changes.outputs.names != '[]' }}
-    name:  Deploying lambda(s) funtion(s)  
-    strategy:
-      matrix:
-        workflow: ${{ fromJSON(needs.changes.outputs.names) }}
-    uses: ./.github/workflows/reusable-workflow.yml
-    with:
-      stage: dev
-      resource: ${{ (matrix.workflow ) }} 
-=======
+<<<<<<<<< Temporary merge branch 1
       - name: Get Current Pull Request
         uses: 8BitJonny/gh-get-current-pr@1.0.1
         id: pr
@@ -207,4 +195,16 @@ jobs:
       - name: Run three "build"
         if: contains(steps.file_changes.outputs.files , '"three/')
         run: echo Hello, three!
->>>>>>> feature
+=========
+  activate-workflow:
+    needs: changes
+    if: ${{ needs.changes.outputs.names != '[]' }}
+    name:  Deploying lambda(s) funtion(s)  
+    strategy:
+      matrix:
+        workflow: ${{ fromJSON(needs.changes.outputs.names) }}
+    uses: ./.github/workflows/reusable-workflow.yml
+    with:
+      stage: dev
+      resource: ${{ (matrix.workflow ) }} 
+>>>>>>>>> Temporary merge branch 2
