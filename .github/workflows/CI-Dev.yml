@@ -171,6 +171,7 @@ jobs:
             - 'update-streepmap/**'
   print-info:
     name: print info
+    runs-on: ubuntu-latest
     steps:
       - run: echo ${{ github.base_ref }} ${{ github.head_ref }}
   activate-workflow:
