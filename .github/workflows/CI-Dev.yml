@@ -65,7 +65,7 @@ jobs:
     outputs:
       names: ${{ steps.filter.outputs.changes }}
     steps:
-    - run echo ${{ github.base_ref }} ${{ github.head_ref }}
+    - run: echo ${{ github.base_ref }} ${{ github.head_ref }}
     - uses: actions/checkout@v2
     - name: Detect Changes
       uses: dorny/paths-filter@v2
