@@ -1,12 +1,7 @@
 on:
-  pull_request:
-    types: 
-      - closed
-    branches:
-      - develop
   push:
     branches:
-      - "feature*"
+      - master
     
     paths:
       - 'addresses/**'
@@ -60,7 +55,7 @@ on:
       - 'lambda2/**'
 jobs:
   changes:
-    name: Detect Changes in folder 
+    name: Detect Changes in folder
     runs-on: ubuntu-latest
     outputs:
       names: ${{ steps.filter.outputs.changes }}
@@ -169,6 +164,7 @@ jobs:
             - 'update-payment-information/**'
           update-streepmap:
             - 'update-streepmap/**'
+
   activate-workflow:
     needs: changes
     if: ${{ needs.changes.outputs.names != '[]' }}
@@ -179,6 +175,6 @@ jobs:
     uses: ./.github/workflows/reusable-workflow.yml
     with:
       stage: dev
-      action: build
+      action: deploy
       resource: ${{ (matrix.workflow ) }} 
 
