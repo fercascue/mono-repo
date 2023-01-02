@@ -1,12 +1,7 @@
 on:
-  pull_request:
-    types: 
-      - closed
-    branches:
-      - develop
   push:
     branches:
-      - "feature*"
+      - develop
     
     paths:
       - 'addresses/**'
