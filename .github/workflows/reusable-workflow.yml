@@ -3,9 +3,6 @@ name: reusable workflow
 on:
   workflow_call:
     inputs:
-      action:
-        required: true
-        type: string
       stage:
         required: true
         type: string
@@ -21,14 +18,9 @@ on:
         required: false
         type: string
         default: ''  
-    #secrets:
-    #  AWS_ACCESS_KEY_ID:
-    #    required: true
-    #  AWS_SECRET_ACCESS_KEY:
-    #    required: true
 
 jobs:
-  build-project:
+  build-lambda-project:
     name: Build ${{ inputs.stage }} the lambda function ${{ inputs.resource }}
     runs-on: ubuntu-latest
     if: ${{ inputs.resource != 'layer' }}
@@ -49,11 +41,14 @@ jobs:
          cache: maven
 
      - name: Build with Maven
-       run: mvn clean install ${{ inputs.maven-params }} --file pom.xml     
+       run: mvn clean install ${{ inputs.maven-params }} --file pom.xml   
+
+     - name: print folder
+       run: ls -la ./target     
   
-  build-image-layer:
-    name: Deploy layer ${{ inputs.stage }} the lambda function ${{ inputs.resource }}
-    needs: build-project
+  build-layer-project:
+    name: Deploy layer ${{ inputs.stage }} from ${{ inputs.resource }}
+    needs: build-lambda-project
     if: ${{ inputs.resource == 'layer' }} 
     runs-on: ubuntu-latest
     steps:
@@ -65,10 +60,12 @@ jobs:
        run: |
           echo working_directory is ${{ inputs.resource }}
           echo project version is ${{ env.PROJECT_VERSION }}
+     - name: print folder
+       run: ls -la ./target       
   
-  deploy-image-layer:
-    name: Deploy layer ${{ inputs.stage }} the lambda function ${{ inputs.resource }}
-    needs: build-image-layer
+  deploy-lambda-project:
+    name: Deploy from ${{ inputs.stage }} the lambda function ${{ inputs.resource }}
+    needs: build-lambda-project
     if: ${{ github.ref_name == 'develop' }} 
     runs-on: ubuntu-latest
     steps:
@@ -80,14 +77,16 @@ jobs:
        run: |
           echo working_directory is ${{ inputs.resource }}
           echo project version is ${{ env.PROJECT_VERSION }}
+     - name: print folder
+       run: ls -la ./target       
 
-  build-image:
-    name: Deploy ${{ inputs.stage }} the lambda function ${{ inputs.resource }}
-    needs: build-project
+  deploy-layer-project:
+    name: Deploy layer ${{ inputs.stage }} from ${{ inputs.resource }}
+    needs: build-layer-project
     if: ${{ github.ref_name == 'develop' }} 
     runs-on: ubuntu-latest
     steps:
-     - run: echo Build image
+     - run: echo Build image layer 
      - name: Set project version as environment variable
        run: echo "PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
      
@@ -95,4 +94,6 @@ jobs:
        run: |
           echo working_directory is ${{ inputs.resource }}
           echo project version is ${{ env.PROJECT_VERSION }}
+     - name: print folder
+       run: ls -la ./target       
         
