@@ -31,6 +31,7 @@ jobs:
   build-project:
     name: Build ${{ inputs.stage }} the lambda function ${{ inputs.resource }}
     runs-on: ubuntu-latest
+    if: ${{ inputs.resource != 'layer' }}
     defaults:
       run:
         shell: bash
@@ -53,7 +54,7 @@ jobs:
   build-image-layer:
     name: Deploy layer ${{ inputs.stage }} the lambda function ${{ inputs.resource }}
     needs: build-project
-    if: ${{ inputs.resource == 'layer' } && { github.ref_name == 'develop' }} 
+    if: ${{ inputs.resource == 'layer' }} 
     runs-on: ubuntu-latest
     steps:
      - run: echo Build image layer 
@@ -64,7 +65,21 @@ jobs:
        run: |
           echo working_directory is ${{ inputs.resource }}
           echo project version is ${{ env.PROJECT_VERSION }}
-
+  
+  deploy-image-layer:
+    name: Deploy layer ${{ inputs.stage }} the lambda function ${{ inputs.resource }}
+    needs: build-image-layer
+     if: ${{ github.ref_name == 'develop' }} 
+    runs-on: ubuntu-latest
+    steps:
+     - run: echo Build image layer 
+     - name: Set project version as environment variable
+       run: echo "PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+     
+     - name: Print debug info
+       run: |
+          echo working_directory is ${{ inputs.resource }}
+          echo project version is ${{ env.PROJECT_VERSION }}
 
   build-image:
     name: Deploy ${{ inputs.stage }} the lambda function ${{ inputs.resource }}
