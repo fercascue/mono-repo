@@ -179,6 +179,5 @@ jobs:
     uses: ./.github/workflows/reusable-workflow.yml
     with:
       stage: dev
-      action: build
       resource: ${{ (matrix.workflow ) }} 
 
