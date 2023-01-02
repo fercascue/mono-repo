@@ -174,7 +174,7 @@ jobs:
        run: echo values selected- ${{ fromJSON(needs.changes.outputs.names) }} 
 
   activate-workflow:
-    needs: print-output
+    needs: changes
     if: ${{ needs.changes.outputs.names != '[]' }}
     name:  Deploying lambda(s) funtion(s)  
     strategy:
