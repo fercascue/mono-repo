@@ -50,4 +50,10 @@ jobs:
      - name: Build with Maven
        run: mvn clean install ${{ inputs.maven-params }} --file pom.xml     
 
-  
+  build-image:
+    name: Deploy ${{ inputs.stage }} the lambda function ${{ inputs.resource }}
+    needs: build-project
+    if: ${{ github.ref_name == 'develop' }} 
+    runs-on: ubuntu-latest
+    steps:
+     - run: echo Build image 
