@@ -29,11 +29,12 @@ on:
 
 jobs:
   set-vars: 
-    name: Configuration for beta branch
+    name: Configuration 
     if: contains(inputs.resource , 'lambda1')
+    runs-on: ubuntu-latest
     steps:
-      - name: Set values
-       run: echo "IS_LAYER=true" >> $GITHUB_ENV
+     - name: Set values
+      run: echo "IS_LAYER=true" >> $GITHUB_ENV
       
   
   build-project:
