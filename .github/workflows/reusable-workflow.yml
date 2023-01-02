@@ -50,7 +50,7 @@ jobs:
      - name: Build with Maven
        run: mvn clean install ${{ inputs.maven-params }} --file pom.xml     
   
-   build-image-layer:
+  build-image-layer:
     name: Deploy layer ${{ inputs.stage }} the lambda function ${{ inputs.resource }}
     needs: build-project
     if: ${{ github.ref_name == 'develop' }} && contains(${{ inputs.resource }}, 'lambda1') 
