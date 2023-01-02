@@ -164,7 +164,7 @@ jobs:
           update-streepmap:
             - 'update-streepmap/**'
 
-<<<<<<<<< Temporary merge branch 1
+
       - name: Get Current Pull Request
         uses: 8BitJonny/gh-get-current-pr@1.0.1
         id: pr
@@ -195,7 +195,7 @@ jobs:
       - name: Run three "build"
         if: contains(steps.file_changes.outputs.files , '"three/')
         run: echo Hello, three!
-=========
+
   activate-workflow:
     needs: changes
     if: ${{ needs.changes.outputs.names != '[]' }}
@@ -207,4 +207,4 @@ jobs:
     with:
       stage: dev
       resource: ${{ (matrix.workflow ) }} 
->>>>>>>>> Temporary merge branch 2
+
