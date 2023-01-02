@@ -65,7 +65,6 @@ jobs:
     outputs:
       names: ${{ steps.filter.outputs.changes }}
     steps:
-    - run: echo ${{ github.base_ref }} ${{ github.head_ref }}
     - uses: actions/checkout@v2
     - name: Detect Changes
       uses: dorny/paths-filter@v2
@@ -170,7 +169,10 @@ jobs:
             - 'update-payment-information/**'
           update-streepmap:
             - 'update-streepmap/**'
-
+  print-info:
+    name: print info
+    steps:
+      - run: echo ${{ github.base_ref }} ${{ github.head_ref }}
   activate-workflow:
     needs: changes
     if: ${{ needs.changes.outputs.names != '[]' }}
