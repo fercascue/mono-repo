@@ -175,7 +175,6 @@ jobs:
 
   activate-workflow:
     needs: print-output
-    name: Activate workflow
     if: ${{ needs.changes.outputs.names != '[]' }}
     name:  Deploying lambda(s) funtion(s)  
     strategy:
