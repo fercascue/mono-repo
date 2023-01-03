@@ -58,8 +58,6 @@ on:
       - 'update-streepmap/**'
       - 'lambda1/**'
       - 'lambda2/**'
-env:
-      OUTPUT: ${{ steps.run-script.outputs.matrix }}
 jobs:
   
   activate-workflow:  
@@ -75,3 +73,4 @@ jobs:
          echo "matrix=$(./1.sh)" >> $GITHUB_OUTPUT
       shell: bash
     
+  
