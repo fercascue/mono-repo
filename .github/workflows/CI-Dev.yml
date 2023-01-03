@@ -79,7 +79,7 @@ jobs:
     needs: activate-workflow
     strategy:
       matrix:
-        version: ["lambda1"]
+        version: ${{ env.matrix }}
     uses: ./.github/workflows/reusable-workflow.yml
     with:
       stage: dev
