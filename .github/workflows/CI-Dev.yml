@@ -59,18 +59,125 @@ on:
       - 'lambda1/**'
       - 'lambda2/**'
 jobs:
-  
-  activate-workflow:  
+  changes:
+    name: Detect Changes in folder 
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.run-script.outputs.matrix }}
+      names: ${{ steps.filter.outputs.changes }}
     steps:
     - uses: actions/checkout@v2
+    - name: Detect Changes
+      uses: dorny/paths-filter@v2
+      id: filter
       with:
-         fetch-depth: 0
-    - name: Run script file
-      id: run-script
-      run: |
-         chmod +x ./1.sh
-         ./1.sh
-      shell: bash
+        filters: |
+          lambda1:
+            - 'lambda1/**'
+          lambda2:
+            - 'lambda2/**'
+          addresses:
+            - 'addresses/**'    
+          admin-notification:
+            - 'admin-notification/**'
+          annual-price:
+            - 'annual-price/**'
+          appliances:
+            - 'appliances/**'
+          auth:
+            - 'auth/**'
+          automatic-ftp:
+            - 'automatic-ftp/**'
+          automatic-target-load:
+            - 'automatic-target-load/**'
+          card-token:
+            - 'card-token/**'
+          check-in:
+            - 'check-in/**'
+          consumption:
+            - 'consumption/**'
+          contracts:
+            - 'contracts/**'
+          data:
+            - 'data/**'
+          dualization-campaign:
+            - 'dualization-campaign/**'
+          email-sent-archive:
+            - 'email-sent-archive/**'
+          erroneous-payment-deletion:
+            - 'erroneous-payment-deletion/**'
+          export-power-consultancy:
+            - 'export-power-consultancy/**'
+          facilita:
+            - 'facilita/**'
+          fidelisation-catalog-update:
+            - 'fidelisation-catalog-update/**'
+          gateway-orders:
+            - 'gateway-orders/**'
+          generic-event-export:
+            - 'generic-event-export/**'
+          help:
+            - 'help/**'
+          hiring:
+            - 'hiring/**'
+          inquires:
+            - 'inquires/**'
+          invoice-notification:
+            - 'invoice-notification/**'
+          invoices:
+            - 'invoices/**'
+          login-reporting:
+            - 'login-reporting/**'
+          mailing-function:
+            - 'mailing-function/**'
+          managements:
+            - 'managements/**'
+          no-consent-reporting:
+            - 'no-consent-reporting/**'
+          payment:
+            - 'payment/**'
+          points:
+            - 'points/**'
+          power-advisory:
+            - 'power-advisory/**'
+          power-change:
+            - 'power-change/**'
+          power-consultancy:
+            - 'power-consultancy/**'
+          profile:
+            - 'profile/**'
+          reading-contribution:
+            - 'reading-contribution/**'
+          reprocess-unsent-mail:
+            - 'reprocess-unsent-mail/**'
+          sign-up:
+            - 'sign-up/**'
+          sms-token-expiration:
+            - 'sms-token-expiration/**'
+          social-bonus:
+            - 'social-bonus/**'
+          splitting:
+            - 'splitting/**'
+          street-load:
+            - 'street-load/**'
+          subtask-payment-check:
+            - 'subtask-payment-check/**'
+          unsent-email-reporting:
+            - 'unsent-email-reporting/**'
+          update-offices:
+            - 'update-offices/**'
+          update-payment-information:
+            - 'update-payment-information/**'
+          update-streepmap:
+            - 'update-streepmap/**'
+  activate-workflow:
+    needs: changes
+    if: ${{ needs.changes.outputs.names != '[]' }}
+    name:  Deploying lambda(s) funtion(s)  
+    strategy:
+      matrix:
+        workflow: ${{ fromJSON(needs.changes.outputs.names) }}
+    uses: ./.github/workflows/reusable-workflow.yml
+    with:
+      stage: dev
+      resource: ${{ (matrix.workflow ) }} 
+
