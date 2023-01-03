@@ -63,7 +63,7 @@ jobs:
   activate-workflow:  
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.run-script.outputs.matrix.files }}
+      matrix: ${{ steps.run-script.outputs.matrix }}
     steps:
     - uses: actions/checkout@v2
       with:
@@ -72,6 +72,5 @@ jobs:
       id: run-script
       run: |
          chmod +x ./1.sh
-         echo ./1.sh
+         ./1.sh
       shell: bash
-      
