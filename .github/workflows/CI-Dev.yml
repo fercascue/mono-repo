@@ -62,10 +62,8 @@ jobs:
   
   activate-workflow:  
     runs-on: ubuntu-latest
-    strategy:
-      matrix: 
-        greeting: [Hello, Howdy, Hey]
-       #${{ steps.run-script.outputs.matrix }}
+    env:
+        OUTPUT: ${{ steps.run-script.outputs.matrix }}
     steps:
     - uses: actions/checkout@v2
       with:
@@ -77,14 +75,3 @@ jobs:
          echo "matrix=$(./1.sh)" >> $GITHUB_OUTPUT
       shell: bash
     
-  run-workflow:
-    needs: activate-workflow
-    if: ${{ needs.activate-workflow.outputs.matrix.greeting != '[]' }}
-    name:  Deploying lambda(s) funtion(s)  
-    strategy:
-      matrix: ${{ fromJSON(needs.activate-workflow.outputs.matrix.greeting) }}
-    uses: ./.github/workflows/reusable-workflow.yml
-    with:
-      stage: dev
-      resource: ${{ (matrix) }} 
-
