@@ -62,7 +62,7 @@ jobs:
   
   activate-workflow:  
     runs-on: ubuntu-latest
-    outputs:
+    strategy:
       matrix: 
         greeting: [Hello, Howdy, Hey]
        #${{ steps.run-script.outputs.matrix }}
