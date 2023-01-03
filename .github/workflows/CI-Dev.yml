@@ -72,10 +72,9 @@ jobs:
       id: run-script
       run: |
          chmod +x ./1.sh
-         echo "file_changes=$(./1.sh)" >> $GITHUB_ENV
+         echo "file_changes=$(./1.sh)" >> $GITHUB_OUTPUT
       shell: bash
-    - name: print val
-      run: echo $file_changes
+   
     
   job2:
     needs: activate-workflow
