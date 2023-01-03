@@ -80,8 +80,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix: ${{ fromJSON( needs.activate-workflow.outputs.matrix) }}
-    steps:
-      - run: echo ${{ (matrix  ) }}    
+    uses: ./.github/workflows/reusable-workflow.yml
+    with:
+      stage: dev
+      resource: ${{ (matrix) }}    
   run-workflow:
     needs: activate-workflow
     #if: ${{ needs.activate-workflow.outputs.matrix != '[]' }}
