@@ -63,7 +63,7 @@ jobs:
   activate-workflow:  
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.run-script.outputs.matrix }}
+      file_changes: ${{ steps.run-script.outputs.file_changes }}
     steps:
     - uses: actions/checkout@v2
       with:
@@ -72,14 +72,14 @@ jobs:
       id: run-script
       run: |
          chmod +x ./1.sh
-         echo "VALUES_ADD=$(./1.sh)" >> $GITHUB_ENV
+         echo "file_changes=$(./1.sh)" >> $GITHUB_ENV
       shell: bash
     
   job2:
     needs: activate-workflow
     strategy:
       matrix:
-        version: ${{ env.VALUES_ADD }}
+        version: ${{ needs.activate-workflow.outputs.file_changes }}
     uses: ./.github/workflows/reusable-workflow.yml
     with:
       stage: dev
