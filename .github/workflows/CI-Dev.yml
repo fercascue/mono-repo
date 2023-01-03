@@ -74,12 +74,19 @@ jobs:
          chmod +x ./1.sh
          echo "file_changes=$(./1.sh)" >> $GITHUB_OUTPUT
       shell: bash
-   
+    - name: print val
+      run: echo ${{ file_changes }}  
     
   job2:
     needs: activate-workflow
-    runs-on: ubuntu-latest
-    steps:
-     - name: Print 2
-       run: echo  ${{ needs.activate-workflow.outputs.file_changes }}
-   
+    strategy:
+      matrix:
+        version: ${{ needs.activate-workflow.outputs.file_changes }}
+    uses: ./.github/workflows/reusable-workflow.yml
+    with:
+      stage: dev
+      resource: ${{ (matrix.version) }}    
+
+      
+ 
+
