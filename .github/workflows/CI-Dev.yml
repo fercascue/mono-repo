@@ -87,10 +87,9 @@ jobs:
     if: ${{ needs.activate-workflow.outputs.matrix != '[]' }}
     name:  Deploying lambda(s) funtion(s)  
     strategy:
-      matrix:
-        workflow: ${{ fromJSON(needs.activate-workflow.outputs.matrix) }}
+      matrix: ${{ fromJSON(needs.activate-workflow.outputs.matrix) }}
     uses: ./.github/workflows/reusable-workflow.yml
     with:
       stage: dev
-      resource: ${{ (matrix.workflow ) }} 
+      resource: ${{ (matrix) }} 
 
