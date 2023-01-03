@@ -62,6 +62,8 @@ jobs:
   
   activate-workflow:  
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.run-script.outputs.matrix }}
     steps:
     - uses: actions/checkout@v2
       with:
@@ -70,16 +72,14 @@ jobs:
       id: run-script
       run: |
          chmod +x ./1.sh
-         echo "SELECTED_COLOR={\"include\":[{\"project\":\"foo\",\"config\":\"Debug\"},{\"project\":\"bar\",\"config\":\"Release\"}]}" >> $GITHUB_OUTPUT
+         echo "matrix={\"include\":[{\"project\":\"foo\",\"config\":\"Debug\"},{\"project\":\"bar\",\"config\":\"Release\"}]}" >> $GITHUB_OUTPUT
       shell: bash
-    - name: Get color
-      run: echo "The selected color is ${{ steps.run-script.outputs.SELECTED_COLOR }}"
-
+    
   job2:
     needs: activate-workflow
     runs-on: ubuntu-latest
     strategy:
-      matrix: ${{ fromJSON( needs.run-script.outputs.SELECTED_COLOR) }}
+      matrix: ${{ fromJSON( needs.activate-workflow.outputs.matrix) }}
     steps:
       - run: echo ${{ (matrix  ) }}    
  # activate-workflow:
