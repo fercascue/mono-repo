@@ -72,7 +72,7 @@ jobs:
       id: run-script
       run: |
          chmod +x ./1.sh
-         echo "matrix=$(./1.sh)" >> $GITHUB_OUTPUT
+         echo "matrix={\"include\":[{\"project\":\"foo\",\"config\":\"Debug\"},{\"project\":\"bar\",\"config\":\"Release\"}]}" >> $GITHUB_OUTPUT
       shell: bash
     
   job2:
