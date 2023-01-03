@@ -74,6 +74,15 @@ jobs:
       shell: bash
     - name: Get color
       run: echo "The selected color is ${{ steps.run-script.outputs.SELECTED_COLOR }}"
+
+  job2:
+    needs: activate-workflow
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: 
+        workflow: ${{ fromJSON( steps.run-script.outputs.SELECTED_COLOR) }}
+    steps:
+      - run: echo ${{ (matrix.workflow ) }}    
  # activate-workflow:
  #   needs: changes
  #   if: ${{ needs.changes.outputs.names != '[]' }}
