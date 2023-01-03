@@ -1,6 +1,6 @@
 #!/bin/bash
 
-readarray -t my_array < <(git diff --dirstat=files,0 HEAD~1 | sed -E 's/^[ 0-9.]+% //g' | sed -E 's/\/.*$//g')
+readarray -t my_array < <(git diff --dirstat=files,0 HEAD~1 | jq -r '.[].source' )
 file_changes=()
 # Start the JSON
 file_changes+=( {"\"files\":[" )
