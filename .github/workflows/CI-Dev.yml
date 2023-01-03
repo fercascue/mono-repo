@@ -81,7 +81,7 @@ jobs:
     strategy:
       matrix: ${{ fromJSON( steps.run-script.outputs.SELECTED_COLOR) }}
     steps:
-      - run: echo ${{ (matrix ) }}    
+      - run: echo ${{ (matrix  ) }}    
  # activate-workflow:
  #   needs: changes
  #   if: ${{ needs.changes.outputs.names != '[]' }}
