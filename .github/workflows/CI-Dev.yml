@@ -79,10 +79,9 @@ jobs:
     needs: activate-workflow
     runs-on: ubuntu-latest
     strategy:
-      matrix: 
-        workflow: ${{ fromJSON( steps.run-script.outputs.SELECTED_COLOR) }}
+      matrix: ${{ fromJSON( steps.run-script.outputs.SELECTED_COLOR) }}
     steps:
-      - run: echo ${{ (matrix.workflow ) }}    
+      - run: echo ${{ (matrix ) }}    
  # activate-workflow:
  #   needs: changes
  #   if: ${{ needs.changes.outputs.names != '[]' }}
