@@ -72,14 +72,6 @@ jobs:
       id: run-script
       run: |
          chmod +x ./1.sh
-         echo "matrix={\"files\":[ {\"source\":\"lambda1\"}]}" >> $GITHUB_OUTPUT
+         echo ./1.sh
       shell: bash
-    
-  job2:
-    needs: activate-workflow
-    runs-on: ubuntu-latest
-    strategy:
-      matrix: ${{ fromJSON( needs.activate-workflow.outputs.matrix) }}
-    steps:
-    - run: echo ${{matrix }}
-  
+      
