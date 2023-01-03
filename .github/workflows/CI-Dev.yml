@@ -63,7 +63,7 @@ jobs:
   activate-workflow:  
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.run-script.outputs.matrix }}
+      matrix: ${{ steps.run-script.outputs.matrix.files }}
     steps:
     - uses: actions/checkout@v2
       with:
@@ -79,7 +79,7 @@ jobs:
     needs: activate-workflow
     runs-on: ubuntu-latest
     strategy:
-      matrix: ${{ fromJSON( needs.activate-workflow.outputs.matrix.files) }}
+      matrix: ${{ fromJSON( needs.activate-workflow.outputs.matrix) }}
     steps:
     - run: echo ${{matrix }}
   
