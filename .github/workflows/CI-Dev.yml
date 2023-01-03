@@ -63,7 +63,7 @@ jobs:
   activate-workflow:  
     runs-on: ubuntu-latest
     env:
-        OUTPUT: ${{ steps.run-script.outputs.matrix }}
+      OUTPUT: ${{ steps.run-script.outputs.matrix }}
     steps:
     - uses: actions/checkout@v2
       with:
