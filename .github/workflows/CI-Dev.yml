@@ -77,7 +77,6 @@ jobs:
     
   job2:
     needs: activate-workflow
-    needs: activate-workflow
     runs-on: ubuntu-latest
     steps:
      - run: echo ${{  needs.activate-workflow.outputs.matrix }}
