@@ -77,12 +77,14 @@ jobs:
     
   job2:
     needs: activate-workflow
-    strategy:
-      matrix: [Hello, Howdy, Hey]
+    example_matrix:
+     strategy:
+      matrix:
+        version: [10, 12, 14]
     uses: ./.github/workflows/reusable-workflow.yml
     with:
       stage: dev
-      resource: ${{ (matrix) }}    
+      resource: ${{ (matrix.version) }}    
 
       
  
