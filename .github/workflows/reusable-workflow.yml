@@ -90,7 +90,7 @@ jobs:
     if: ${{ github.ref_name == 'develop' }} 
     runs-on: ubuntu-latest
     steps:
-     - run: echo Build image layer 
+     - run: echo Build lambda image 
      - name: Set project version as environment variable
        run: echo "PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
      

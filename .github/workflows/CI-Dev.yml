@@ -169,15 +169,26 @@ jobs:
             - 'update-payment-information/**'
           update-streepmap:
             - 'update-streepmap/**'
-  activate-workflow:
-    needs: changes
-    if: ${{ needs.changes.outputs.names != '[]' }}
-    name:  Deploying lambda(s) funtion(s)  
-    strategy:
-      matrix:
-        workflow: ${{ fromJSON(needs.changes.outputs.names) }}
-    uses: ./.github/workflows/reusable-workflow.yml
-    with:
-      stage: dev
-      resource: ${{ (matrix.workflow ) }} 
+  activate-workflow:  
+    run_tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run script file
+      run: |
+         chmod +x ./1.sh
+         ./1.sh
+      shell: bash
+ 
+ # activate-workflow:
+ #   needs: changes
+ #   if: ${{ needs.changes.outputs.names != '[]' }}
+ #   name:  Deploying lambda(s) funtion(s)  
+ #   strategy:
+ #     matrix:
+ #       workflow: ${{ fromJSON(needs.changes.outputs.names) }}
+ #   uses: ./.github/workflows/reusable-workflow.yml
+ #   with:
+ #     stage: dev
+ #     resource: ${{ (matrix.workflow ) }} 
 
