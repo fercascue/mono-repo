@@ -67,11 +67,13 @@ jobs:
       with:
          fetch-depth: 0
     - name: Run script file
+      id: run-script
       run: |
          chmod +x ./1.sh
          echo "SELECTED_COLOR=$(./1.sh)" >> $GITHUB_OUTPUT
       shell: bash
- 
+    - name: Get color
+      run: echo "The selected color is ${{ steps.run-script.outputs.SELECTED_COLOR }}"
  # activate-workflow:
  #   needs: changes
  #   if: ${{ needs.changes.outputs.names != '[]' }}
