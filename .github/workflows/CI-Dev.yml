@@ -72,11 +72,10 @@ jobs:
       id: run-script
       run: |
          chmod +x ./1.sh
-         echo "matrix={\"include\":[{\"project\":\"foo\",\"config\":\"Debug\"},{\"project\":\"bar\",\"config\":\"Release\"}]}" >> $GITHUB_OUTPUT
+         echo "matrix={\"files\":[ {\"source\":\"lambda1\"}]}" >> $GITHUB_OUTPUT
       shell: bash
     
   job2:
-    runs-on: ubuntu-latest
     needs: activate-workflow
     strategy:
       matrix: ${{ fromJSON( needs.activate-workflow.outputs.matrix) }}
