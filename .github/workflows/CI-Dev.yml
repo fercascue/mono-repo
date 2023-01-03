@@ -79,7 +79,7 @@ jobs:
     needs: activate-workflow
     runs-on: ubuntu-latest
     strategy:
-      matrix: ${{ fromJSON( needs.activate-workflow.outputs.matrix.source) }}
+      matrix: ${{ fromJSON( needs.activate-workflow.outputs.matrix.files) }}
     steps:
     - run: echo ${{matrix }}
   
