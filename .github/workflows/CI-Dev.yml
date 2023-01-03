@@ -75,7 +75,7 @@ jobs:
          echo "file_changes=$(./1.sh)" >> $GITHUB_ENV
       shell: bash
     - name: print val
-      run: echo ${{ file_changes }}  
+      run: echo $file_changes 
  
 
       
