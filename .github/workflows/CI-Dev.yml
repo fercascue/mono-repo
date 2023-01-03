@@ -69,7 +69,7 @@ jobs:
     - name: Run script file
       run: |
          chmod +x ./1.sh
-         ./1.sh
+         echo "SELECTED_COLOR=$(./1.sh)" >> $GITHUB_OUTPUT
       shell: bash
  
  # activate-workflow:
