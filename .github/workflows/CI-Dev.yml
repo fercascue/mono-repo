@@ -70,7 +70,7 @@ jobs:
       id: run-script
       run: |
          chmod +x ./1.sh
-         echo "matrix=$(./1.sh)" >> $GITHUB_OUTPUT
+         echo $(./1.sh)
       shell: bash
     
   
