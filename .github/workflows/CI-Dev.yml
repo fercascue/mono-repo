@@ -70,7 +70,7 @@ jobs:
       id: run-script
       run: |
          chmod +x ./1.sh
-         echo "SELECTED_COLOR=$(./1.sh)" >> $GITHUB_OUTPUT
+         echo "SELECTED_COLOR={\"include\":[{\"project\":\"foo\",\"config\":\"Debug\"},{\"project\":\"bar\",\"config\":\"Release\"}]}" >> $GITHUB_OUTPUT
       shell: bash
     - name: Get color
       run: echo "The selected color is ${{ steps.run-script.outputs.SELECTED_COLOR }}"
