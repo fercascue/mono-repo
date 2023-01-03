@@ -82,5 +82,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
      - name: Print 2
-       run echo  ${{ needs.activate-workflow.outputs.file_changes }}
+       run: echo  ${{ needs.activate-workflow.outputs.file_changes }}
    
