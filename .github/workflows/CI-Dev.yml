@@ -75,14 +75,14 @@ jobs:
          echo "matrix=$(./1.sh)" >> $GITHUB_OUTPUT
       shell: bash
     
-  job2:
-    needs: activate-workflow
-    runs-on: ubuntu-latest
-    strategy:
-      matrix: ${{ fromJSON( needs.activate-workflow.outputs.matrix) }}
-    steps:
-      - run: echo ${{ (matrix  ) }}    
-  activate-workflow:
+  #job2:
+  #  needs: activate-workflow
+  #  runs-on: ubuntu-latest
+  #  strategy:
+  #    matrix: ${{ fromJSON( needs.activate-workflow.outputs.matrix) }}
+  #  steps:
+  #    - run: echo ${{ (matrix  ) }}    
+  run-workflow:
     needs: activate-workflow
     if: ${{ needs.activate-workflow.outputs.matrix != '[]' }}
     name:  Deploying lambda(s) funtion(s)  
