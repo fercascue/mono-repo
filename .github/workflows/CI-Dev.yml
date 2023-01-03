@@ -81,5 +81,5 @@ jobs:
     strategy:
       matrix: ${{ fromJSON( needs.activate-workflow.outputs.matrix) }}
     steps:
-    - run: echo ${{matrix}}
+    - run: echo ${{matrix.source}}
   
