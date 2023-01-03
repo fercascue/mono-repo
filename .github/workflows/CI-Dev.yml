@@ -77,11 +77,10 @@ jobs:
     
   job2:
     needs: activate-workflow
-    strategy:
-      matrix: ${{ fromJSON( needs.activate-workflow.outputs.matrix) }}
-    uses: ./.github/workflows/reusable-workflow.yml
-    with:
-      stage: dev
-      resource: ${{ (matrix) }}    
+    needs: activate-workflow
+    runs-on: ubuntu-latest
+    steps:
+     - run: echo ${{  needs.activate-workflow.outputs.matrix }}
+ 
  
 
