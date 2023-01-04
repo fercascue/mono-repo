@@ -75,12 +75,11 @@ jobs:
          echo "file_changes=$(./1.sh)" >> $GITHUB_OUTPUT
       shell: bash
    
-    
   job2:
     needs: activate-workflow
     strategy:
       matrix:
-        version: ${{ needs.activate-workflow.outputs.file_changes }}
+        version: ${{ fromJSON(needs.activate-workflow.outputs.file_changes) }}
     uses: ./.github/workflows/reusable-workflow.yml
     with:
       stage: dev
