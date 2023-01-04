@@ -66,8 +66,8 @@ jobs:
       file_changes: ${{ steps.run-script.outputs.file_changes }}
     steps:
     - uses: actions/checkout@v2
-      with:
-         fetch-depth: 0
+    #  with:
+     #    fetch-depth: 0
     - name: Run script file
       id: run-script
       run: |
