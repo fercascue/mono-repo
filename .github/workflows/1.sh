@@ -10,20 +10,17 @@ file_changes+=("[")
 counter=1
 for source in "${my_array[@]}"
 do
-   if [[ "$source" != *"github"* ]]; then
-    
-
-
-    file_changes+=(\"$source\")
-    # Add a comma unless it is the last element in the array
-    if [ $counter -lt ${#my_array[@]} ]
-    then
-        file_changes+=(",")
-    else
-        file_changes+=("")
-    fi
-    (( counter = counter + 1 ))
-   fi
+  # if [[ "$source" != *"github"* ]]; then
+        file_changes+=(\"$source\")
+        # Add a comma unless it is the last element in the array
+        if [ $counter -lt ${#my_array[@]} ]
+        then
+            file_changes+=(",")
+        else
+            file_changes+=("")
+        fi
+        (( counter = counter + 1 ))
+  # fi
 done
 
 # Close the JSON

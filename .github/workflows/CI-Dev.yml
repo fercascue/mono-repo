@@ -7,7 +7,8 @@ on:
   push:
     branches:
       - "feature*"
-    
+    paths-ignore:
+      - '.github/**'
     paths:
       - 'addresses/**'
       - 'admin-notification/**'
