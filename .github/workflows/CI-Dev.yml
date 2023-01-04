@@ -71,8 +71,8 @@ jobs:
     - name: Run script file
       id: run-script
       run: |
-         chmod +x ./1.sh
-         echo "file_changes=$(./1.sh)" >> $GITHUB_OUTPUT
+         chmod +x ./.github/workflows/1.sh
+         echo "file_changes=$(./.github/workflows/1.sh)" >> $GITHUB_OUTPUT
       shell: bash
    
   job2:
