@@ -109,7 +109,7 @@ jobs:
       - name: Setup jdk
         uses: actions/setup-java@de1bb2b0c5634f0fc4438d7aa9944e68f9bf86cc
         with:
-          java-version: ${{ inputs.java-version }}
+          java-version: 11
           distribution: 'adopt'
           cache: maven
 
@@ -123,8 +123,8 @@ jobs:
         uses: github/codeql-action/analyze@v2
 
   job2:
-    needs: activate-workflow
-    if: ${{ needs.activate-workflow.outputs.file_changes != '[]' }}
+    needs: check-vulnerabilities
+   # if: ${{ needs.activate-workflow.outputs.file_changes != '[]' }}
     strategy:
       matrix:
         version: ${{ fromJSON(needs.activate-workflow.outputs.file_changes) }}
