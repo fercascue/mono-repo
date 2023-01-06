@@ -1,4 +1,4 @@
-name: reusable workflow
+name: Dispatcher workflow
 
 on:
   workflow_call:
@@ -56,9 +56,6 @@ jobs:
 
       - name: Build with Maven
         run: mvn clean install ${{ inputs.maven-params }} --file pom.xml   
-
-      - name: print folder
-        run: ls -la ./target
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2   
