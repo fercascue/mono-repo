@@ -74,7 +74,55 @@ jobs:
          chmod +x ./.github/workflows/1.sh
          echo "file_changes=$(./.github/workflows/1.sh)" >> $GITHUB_OUTPUT
       shell: bash
-   
+
+  check-vulnerabilities:
+    name: Check vulnerabilities 
+    runs-on: ubuntu-latest
+    needs: activate-workflow
+    if: ${{ needs.activate-workflow.outputs.file_changes != '[]' }}
+    strategy:
+      matrix:
+        source: ${{ fromJSON(needs.activate-workflow.outputs.file_changes) }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ (matrix.source) }} 
+    permissions:
+      # required for all workflows
+      security-events: write
+
+      # only required for workflows in private repositories
+      actions: read
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Initializes the CodeQL tools for scanning.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        # Override language selection by uncommenting this and choosing your languages
+        with:
+           languages: java
+
+      # Autobuild attempts to build any compiled languages (C/C++, C#, Go, or Java).
+      # If this step fails, then you should remove it and run the build manually (see below).
+      - name: Setup jdk
+        uses: actions/setup-java@de1bb2b0c5634f0fc4438d7aa9944e68f9bf86cc
+        with:
+          java-version: ${{ inputs.java-version }}
+          distribution: 'adopt'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn clean install ${{ inputs.maven-params }} --file pom.xml   
+
+      - name: print folder
+        run: ls -la ./target
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+
   job2:
     needs: activate-workflow
     if: ${{ needs.activate-workflow.outputs.file_changes != '[]' }}
