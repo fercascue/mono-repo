@@ -3,7 +3,7 @@ package com.example.lambda1;
 public class HelloWorld {
 
  /***
-  * Documentation.
+  * Documentation
   * @param args
  */
   private static void main(final String[] args) {
