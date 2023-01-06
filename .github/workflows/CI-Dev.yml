@@ -1,3 +1,4 @@
+name: Continuous integration 
 on:
   pull_request:
     types: 
@@ -123,8 +124,8 @@ jobs:
         uses: github/codeql-action/analyze@v2
 
   job2:
-    needs: check-vulnerabilities
-   # if: ${{ needs.activate-workflow.outputs.file_changes != '[]' }}
+    needs: [activate-workflow, check-vulnerabilities]
+   if: ${{ needs.activate-workflow.outputs.file_changes != '[]' }}
     strategy:
       matrix:
         version: ${{ fromJSON(needs.activate-workflow.outputs.file_changes) }}
