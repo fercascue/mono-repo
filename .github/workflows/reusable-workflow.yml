@@ -21,13 +21,13 @@ on:
 
 jobs:
   check-vulnerabilities:
-   name: Check vulnerabilities 
-   runs-on: ubuntu-latest
-   defaults:
+    name: Check vulnerabilities 
+    runs-on: ubuntu-latest
+    defaults:
       run:
         shell: bash
         working-directory: ${{ inputs.resource }}
-   permissions:
+    permissions:
       # required for all workflows
       security-events: write
 
