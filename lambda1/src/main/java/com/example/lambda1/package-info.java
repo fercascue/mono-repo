@@ -1,1 +1,1 @@
-package lambda1;
+package com.example.lambda1;
