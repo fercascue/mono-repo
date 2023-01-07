@@ -39,6 +39,7 @@ on:
       - 'login-reporting/**'
       - 'mailing-function/**'
       - 'managements/**'
+      - 'model/**'
       - 'no-consent-reporting/**'
       - 'payment/**'
       - 'points/**'
