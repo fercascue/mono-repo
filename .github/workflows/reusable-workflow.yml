@@ -1,4 +1,4 @@
-name: reusable workflow
+name: Dispatcher workflow suite
 
 on:
   workflow_call:
@@ -20,8 +20,70 @@ on:
         default: ''  
 
 jobs:
+  check-vulnerabilities:
+    name: Check vulnerabilities 
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ inputs.resource }}
+    permissions:
+      # required for all workflows
+      security-events: write
+
+      # only required for workflows in private repositories
+      actions: read
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Initializes the CodeQL tools for scanning.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        # Override language selection by uncommenting this and choosing your languages
+        with:
+           languages: java
+
+      # Autobuild attempts to build any compiled languages (C/C++, C#, Go, or Java).
+      # If this step fails, then you should remove it and run the build manually (see below).
+      - name: Setup jdk
+        uses: actions/setup-java@de1bb2b0c5634f0fc4438d7aa9944e68f9bf86cc
+        with:
+          java-version: ${{ inputs.java-version }}
+          distribution: 'adopt'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn clean install ${{ inputs.maven-params }} --file pom.xml   
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2   
+   
+  lint-codebase:
+    name: Lint Code Base
+    runs-on: ubuntu-latest
+    needs: check-vulnerabilities
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ inputs.resource }} 
+    steps:
+     - name: Checkout Code
+       uses: actions/checkout@v3
+       with:
+         fetch-depth: 0
+
+     - uses: github/super-linter/slim@v4
+       env:
+         VALIDATE_ALL_CODEBASE: false
+         DEFAULT_BRANCH: ${{ inputs.stage }}
+         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         VALIDATE_JAVA: true
+
   build-lambda-project:
     name: Build ${{ inputs.stage }} the lambda function ${{ inputs.resource }}
+    needs: lint-codebase
     runs-on: ubuntu-latest
     if: ${{ inputs.resource != 'layer' }}
     defaults:
@@ -48,7 +110,7 @@ jobs:
   
   build-layer-project:
     name: Deploy layer ${{ inputs.stage }} from ${{ inputs.resource }}
-    needs: build-lambda-project
+    needs: lint-codebase
     if: ${{ inputs.resource == 'layer' }} 
     runs-on: ubuntu-latest
     steps:
@@ -69,7 +131,7 @@ jobs:
     if: ${{ github.ref_name == 'develop' }} 
     runs-on: ubuntu-latest
     steps:
-     - run: echo Build image layer 
+     - run: echo Build lambda image 
      - name: Set project version as environment variable
        run: echo "PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
      
