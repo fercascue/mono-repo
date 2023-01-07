@@ -1,0 +1,142 @@
+name: Security workflow suite
+
+on:
+  workflow_call:
+    inputs:
+      stage:
+        required: true
+        type: string
+      resource:  
+        required: false
+        type: string
+      java-version:
+        required: false
+        type: string
+        default: '11'
+      # allowing calling workflows to pass in maven parameter(s) such as '-Dmaven.test.skip' for certain apps, default to blank, not to skip test
+      maven-params:
+        required: false
+        type: string
+        default: ''  
+
+jobs:
+  test-load:
+    name: Test load 
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      pull-requests: write
+    if: ${{ needs.activate-workflow.outputs.file_changes != '[]' }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ inputs.resource }} 
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup jdk
+        uses: actions/setup-java@de1bb2b0c5634f0fc4438d7aa9944e68f9bf86cc
+        with:
+          java-version: 11
+          distribution: 'adopt'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn clean install ${{ inputs.maven-params }} --file pom.xml   
+
+      - name: print folder
+        run: ls -la ./target/
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          junit_files: "**/TEST-*.xml"
+
+  check-vulnerabilities:
+    name: Check vulnerabilities 
+    needs: test-load
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ inputs.resource }}
+    permissions:
+      # required for all workflows
+      security-events: write
+
+      # only required for workflows in private repositories
+      actions: read
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Initializes the CodeQL tools for scanning.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        # Override language selection by uncommenting this and choosing your languages
+        with:
+           languages: java
+
+      # Autobuild attempts to build any compiled languages (C/C++, C#, Go, or Java).
+      # If this step fails, then you should remove it and run the build manually (see below).
+      - name: Setup jdk
+        uses: actions/setup-java@de1bb2b0c5634f0fc4438d7aa9944e68f9bf86cc
+        with:
+          java-version: ${{ inputs.java-version }}
+          distribution: 'adopt'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn clean install ${{ inputs.maven-params }} --file pom.xml   
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2   
+   
+  lint-codebase:
+    name: Lint Code Base
+    runs-on: ubuntu-latest
+    needs: check-vulnerabilities
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ inputs.resource }} 
+    steps:
+     - name: Checkout Code
+       uses: actions/checkout@v3
+       with:
+         fetch-depth: 0
+
+     - uses: github/super-linter/slim@v4
+       env:
+         VALIDATE_ALL_CODEBASE: false
+         DEFAULT_BRANCH: ${{ inputs.stage }}
+         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         VALIDATE_JAVA: true
+
+  build-project:
+    name: Build project ${{ inputs.resource }} from ${{ github.ref_name }}
+    needs: lint-codebase
+    runs-on: ubuntu-latest
+    if: ${{ inputs.resource != 'layer' }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ inputs.resource }}  
+    steps:
+     - uses: actions/checkout@v2
+     - name: Checkout folder source code from ${{ github.ref_name }} for the event ${{ github.event_name }}
+       run: |
+         echo "Checkout folder ${{ inputs.resource }}"
+     - name: Setup jdk
+       uses: actions/setup-java@de1bb2b0c5634f0fc4438d7aa9944e68f9bf86cc
+       with:
+         java-version: ${{ inputs.java-version }}
+         distribution: 'adopt'
+         cache: maven
+
+     - name: Build with Maven
+       run: mvn clean install ${{ inputs.maven-params }} --file pom.xml
+        
