@@ -1,9 +1,7 @@
 on:
     push:
         branches:
-            - 'release/**'
-    release:
-        types: [created]
+            - master
 
 name: Create Release
 
