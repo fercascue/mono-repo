@@ -61,7 +61,6 @@ on:
       - 'lambda1/**'
       - 'lambda2/**'
 jobs:
-  
   activate-workflow:  
     runs-on: ubuntu-latest
     outputs:
@@ -76,6 +75,41 @@ jobs:
          chmod +x ./.github/workflows/1.sh
          echo "file_changes=$(./.github/workflows/1.sh)" >> $GITHUB_OUTPUT
       shell: bash
+  
+  test-load:
+    name: Test load 
+    runs-on: ubuntu-latest
+    needs: activate-workflow
+    if: ${{ needs.activate-workflow.outputs.file_changes != '[]' }}
+    strategy:
+      matrix:
+        source: ${{ fromJSON(needs.activate-workflow.outputs.file_changes) }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ (matrix.source) }} 
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup jdk
+        uses: actions/setup-java@de1bb2b0c5634f0fc4438d7aa9944e68f9bf86cc
+        with:
+          java-version: 11
+          distribution: 'adopt'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn clean install ${{ inputs.maven-params }} --file pom.xml   
+
+      - name: print folder
+        run: ls -la ./target/
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          junit_files: "./target/surefire-reports/*.xml"
 
   check-vulnerabilities:
     name: Check vulnerabilities 
