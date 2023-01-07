@@ -33,5 +33,4 @@ jobs:
        run: |
           echo working_directory is ${{ inputs.resource }}
           echo project version is ${{ env.PROJECT_VERSION }}
-     - name: print folder
-       run: ls -la ./target 
+   
