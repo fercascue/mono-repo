@@ -89,6 +89,16 @@ jobs:
       stage: ${{ github.ref_name }}
       resource: ${{ (matrix.version) }}    
 
-      
+  application-deploy:
+    name: Deploy to environment ${{ github.ref_name }} && ${{ github.ref_name == 'develop' }} 
+    needs: [activate-workflow, security-scan]
+    if: ${{ needs.activate-workflow.outputs.file_changes != '[]' }}
+    strategy:
+      matrix:
+        version: ${{ fromJSON(needs.activate-workflow.outputs.file_changes) }}
+    uses: ./.github/workflows/reusable-workflow.yml
+    with:
+      stage: develop
+      resource: ${{ (matrix.version) }}     
  
 
