@@ -112,7 +112,7 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
-          junit_files: "**/*.xml"
+          junit_files: "**/TEST-*.xml"
 
   check-vulnerabilities:
     name: Check vulnerabilities 
