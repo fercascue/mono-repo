@@ -1,4 +1,4 @@
-name: pr-name-linter
+name: Linting pull request name
 on:
   pull_request:
     types: ['opened', 'edited', 'reopened', 'synchronize']
