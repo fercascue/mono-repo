@@ -91,7 +91,7 @@ jobs:
       resource: ${{ (matrix.version) }}    
 
   application-deploy:
-    name: Deploy to environment ${{ github.ref_name }} && ${{ github.ref_name == 'develop' }} 
+    name: Deploy application
     needs: activate-workflow
     if: ${{ needs.activate-workflow.outputs.file_changes != '[]' && github.ref_name == 'develop'}}
     strategy:
