@@ -79,6 +79,7 @@ jobs:
   
   
   security-scan:
+    name: Deploy to environment ${{ github.ref_name }} && ${{ github.ref_name != 'develop' }}
     needs: activate-workflow
     if: ${{ needs.activate-workflow.outputs.file_changes != '[]' }} && ${{ github.ref_name != 'develop'}}
     strategy:
