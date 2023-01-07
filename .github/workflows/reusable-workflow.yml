@@ -22,7 +22,6 @@ on:
 jobs:
    deploy-lambda-project:
     name: Deploy to ${{ inputs.stage }} the lambda function ${{ inputs.resource }}
-    needs: build-lambda-project
     if: ${{ github.ref_name == 'develop' }} 
     runs-on: ubuntu-latest
     steps:
