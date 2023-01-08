@@ -22,7 +22,7 @@ on:
 jobs:
    deploy-lambda-project:
     name: Deploy to ${{ inputs.stage }} the lambda function ${{ inputs.resource }}
-    if: ${{ github.ref_name == 'develop' && contains(inputs.resource, 'layer')  }} 
+    if: ${{ github.ref_name == 'develop' && !contains(inputs.resource, 'layer')  }} 
     runs-on: ubuntu-latest
     steps:
      - run: echo Build lambda image 
