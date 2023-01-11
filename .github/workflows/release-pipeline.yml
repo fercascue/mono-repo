@@ -1,0 +1,199 @@
+# This workflow allow to:
+#        - Start a new release
+#        - Finish a started release
+#        - Start a new hotfix
+#        - Finish a started hotfix
+ 
+name: "Release/Hotfix workflow"
+ 
+on:
+  workflow_dispatch:
+    inputs:
+      type:
+        type: choice
+        description: 'Release type'
+        required: true
+        options:
+        - Release
+        - Hotfix
+      action:
+        type: choice
+        description: 'Release action'
+        required: true
+        options:
+        - Start
+        - Finish
+ 
+jobs:
+  new-release:
+    name: "Create release branch and PRs into develop/master"
+    runs-on: ubuntu-latest
+    outputs:
+      app-version: ${{ steps.get-version.outputs.version }}
+      hotfix-version: ${{ env.hotfix-version }}
+    steps:
+           
+      - name: Checkout develop for ${{ github.event.inputs.type }}
+        uses: actions/checkout@v2
+        if: ${{ github.event.inputs.type == 'Release' }}
+        with:
+          ref: develop
+      
+      - name: Checkout master for ${{ github.event.inputs.type }}
+        uses: actions/checkout@v2
+        if: ${{ github.event.inputs.type == 'Hotfix'}}
+        with:
+          ref: master
+      
+      - name: Release Start
+        if: ${{ github.event.inputs.type == 'Release' && github.event.inputs.action == 'Start' }}
+        id: release-start
+        run: |
+          git config --global user.name github-actions
+          git config --global user.email github-actions@github.com
+          mvn gitflow:release-start --batch-mode
+          old=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+          echo "OLD_VERSION=$old" >> $GITHUB_ENV
+          git fetch && git checkout develop
+          new=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+          echo "NEW_VERSION=$new" >> $GITHUB_ENV
+          
+          
+      - name: Release finish
+        if: ${{ github.event.inputs.type == 'Release' && github.event.inputs.action == 'Finish' }}
+        id: release-finish
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          
+          git fetch --unshallow
+          mvn gitflow:release-finish --batch-mode
+      
+      - name: Hotfix Start
+        if: ${{ github.event.inputs.type == 'Hotfix' && github.event.inputs.action == 'Start' }}
+        id: hotfix-start
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          
+          # Get current version from master pom
+          CURRENT_VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+          
+          mvn build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.0
+          mvn versions:commit
+          git commit -a -m "Add 3rd digit to master branch: X.X.0"
+          
+          mvn gitflow:hotfix-start --batch-mode
+          
+          # back to version before hotfix
+          #mvn build-helper:parse-version versions:set -DnewVersion=$CURRENT_VERSION
+          #mvn versions:commit    
+          #git commit -a -m "Back to master version without 3rd digit: X.X "
+          
+          echo "NEW_VERSION=$CURRENT_VERSION.1" >> $GITHUB_ENV
+          echo "OLD_VERSION=$CURRENT_VERSION" >> $GITHUB_ENV
+          echo "hotfix-version=$CURRENT_VERSION.1" >> $GITHUB_ENV
+      
+      - name: Hotfix finish
+        if: ${{ github.event.inputs.type == 'Hotfix' && github.event.inputs.action == 'Finish' }}
+        id: hotfix-finish
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          
+          #mvn build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion}
+          #HOTFIX_VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+          #mvn versions:revert
+          
+          #git fetch --unshallow
+          #git checkout "hotfix/${HOTFIX_VERSION}"
+          #mvn gitflow:hotfix-finish -DhotfixVersion=${HOTFIX_VERSION} --batch-mode    
+      
+      - name: Get old and new version for configuration
+        id: get-versions
+        if: ${{ github.event.inputs.action == 'Start' }}
+        run: |
+          newVersion=${{ env.NEW_VERSION }}          
+          newVersionConfig=${newVersion%-*}
+          oldVersion=${{ env.OLD_VERSION }}          
+          oldVersionConfig=${oldVersion%-*}
+          echo "NEW_CONFIG=$newVersionConfig" >> $GITHUB_ENV
+          echo "OLD_CONFIG=$oldVersionConfig" >> $GITHUB_ENV
+          
+      - name: Create configuration for new version
+        if: ${{ github.event.inputs.action == 'Start' }}
+        env:
+          REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
+        run: echo "config release"
+      
+               
+## Push the docker image into ECR QUA [PROD and PREPROD using AWS Cross Account Replication] ##
+  aws-build-develop:
+    if: ${{ github.event.inputs.action == 'Start' && github.event.inputs.type == 'Release' }}
+    needs: new-release
+    #uses: ./.github/workflows/aws-build-workflow.yml
+    #with:
+    #  env: 'QUA'
+    #  branch-name: 'develop'
+    steps:
+     - run: echo "build develop"
+  
+  aws-build-hotfix:
+    if: ${{ github.event.inputs.action == 'Start' && github.event.inputs.type == 'Hotfix' }}
+    needs: new-release
+    #uses: ./.github/workflows/aws-build-workflow.yml
+    steps:
+     - run: echo "build hotfix"
+    #with:
+     # env: 'QUA'
+     # branch-name: 'hotfix/${{needs.new-release.outputs.hotfix-version}}'
+    #secrets:
+    #    AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #    AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #    AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+    #    ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+    #    PACKAGE_S3_BUCKET_NAME: ${{ secrets.PACKAGE_S3_BUCKET_NAME }}
+    #    USER_NAME: ${{ secrets.USER_NAME }}
+    #    ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+    #    TEAMS_WEBHOOK: ${{ secrets.TEAMS_WEBHOOK }}
+    #    SONAR_TOKEN: ${{ secrets.SONARQUBE_SCAN_TOKEN }}
+    #    SONAR_HOST_URL: ${{ secrets.SONAR_URL }}
+  
+  aws-build-master:
+    if: ${{ github.event.inputs.action == 'Finish' }}
+    needs: new-release
+    steps:
+     - run: echo "build master"
+    #uses: ./.github/workflows/aws-build-workflow.yml
+    #with:
+     # env: 'QUA'
+     # branch-name: 'master'
+    #secrets:
+     #   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+     #   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+     #   AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+     #   ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+     #   PACKAGE_S3_BUCKET_NAME: ${{ secrets.PACKAGE_S3_BUCKET_NAME }}
+     #   USER_NAME: ${{ secrets.USER_NAME }}
+     #   ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+     #   TEAMS_WEBHOOK: ${{ secrets.TEAMS_WEBHOOK }}
+     #   SONAR_TOKEN: ${{ secrets.SONARQUBE_SCAN_TOKEN }}
+     #   SONAR_HOST_URL: ${{ secrets.SONAR_URL }}
+        
+## Update dropdown list values by adding the new version ##
+  update-version:
+    if: ${{ always() && contains(join(needs.*.result, ','), 'success') }}
+    needs: [aws-build-master, aws-build-develop, aws-build-hotfix]
+    steps:
+     - run: echo "update list"
+    #uses: ./.github/workflows/aws-update-image-version.yml
+    #with:
+    #  environment: 'QUA'
+    #secrets:
+    #    AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #    AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #    AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+    #    ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+    #    PACKAGE_S3_BUCKET_NAME: ${{ secrets.PACKAGE_S3_BUCKET_NAME }}
+    #    GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+    #    TEAMS_WEBHOOK: ${{ secrets.TEAMS_WEBHOOK }}
