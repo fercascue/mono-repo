@@ -23,7 +23,7 @@
             <artifactId>gitflow-maven-plugin</artifactId>
             <version>1.19.0</version>
             <configuration>
-                <!-- optional configuration -->
+                <fetchRemote>false</fetchRemote>
             </configuration>
         </plugin>
 			<plugin>
