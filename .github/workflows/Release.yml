@@ -1,24 +1,28 @@
-name: Create release
-
 on:
   release:
-    types: 
-      - open
-   
+    types: [published, edited]
+
+name: Create Release
+
 jobs:
-  activate-workflow:  
+  build:
+    name: Create Release
     runs-on: ubuntu-latest
-    outputs:
-      file_changes: ${{ steps.run-script.outputs.file_changes }}
     steps:
-    - uses: actions/checkout@v2
-      with:
-         fetch-depth: 0
-    - name: Run script file
-      id: run-script
-      run: |
-         chmod +x ./.github/workflows/1.sh
-         echo "file_changes=$(./.github/workflows/1.sh)" >> $GITHUB_OUTPUT
-      shell: bash
-  
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            Changes in this Release
+            - First Change
+            - Second Change
+          draft: false
+          prerelease: false
  
