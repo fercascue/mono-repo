@@ -136,10 +136,6 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.inputs.action == 'Start' && github.event.inputs.type == 'Release' }}
     needs: new-release
-    defaults:
-      run:
-        shell: bash
-        working-directory: "lambda2"
     #uses: ./.github/workflows/aws-build-workflow.yml
     #with:
     #  env: 'QUA'
@@ -151,10 +147,6 @@ jobs:
     if: ${{ github.event.inputs.action == 'Start' && github.event.inputs.type == 'Hotfix' }}
     needs: new-release
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-        working-directory: "lambda2"
     #uses: ./.github/workflows/aws-build-workflow.yml
     steps:
      - run: echo "build hotfix"
