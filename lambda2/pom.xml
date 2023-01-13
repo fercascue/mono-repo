@@ -18,6 +18,14 @@
 
 	<build>
 		<plugins>
+		    <plugin>
+            <groupId>com.amashchenko.maven.plugin</groupId>
+            <artifactId>gitflow-maven-plugin</artifactId>
+            <version>1.19.0</version>
+            <configuration>
+                <fetchRemote>false</fetchRemote>
+            </configuration>
+        </plugin>
 			<plugin>
 				<groupId>com.amashchenko.maven.plugin</groupId>
 				<artifactId>gitflow-maven-plugin</artifactId>
