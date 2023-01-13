@@ -129,7 +129,7 @@ jobs:
                
 ## Push the docker image into ECR QUA [PROD and PREPROD using AWS Cross Account Replication] ##
   aws-build-develop:
-  runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
     if: ${{ github.event.inputs.action == 'Start' && github.event.inputs.type == 'Release' }}
     needs: new-release
     #uses: ./.github/workflows/aws-build-workflow.yml
