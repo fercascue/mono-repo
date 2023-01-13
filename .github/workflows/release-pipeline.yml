@@ -129,6 +129,7 @@ jobs:
                
 ## Push the docker image into ECR QUA [PROD and PREPROD using AWS Cross Account Replication] ##
   aws-build-develop:
+  runs-on: ubuntu-latest
     if: ${{ github.event.inputs.action == 'Start' && github.event.inputs.type == 'Release' }}
     needs: new-release
     #uses: ./.github/workflows/aws-build-workflow.yml
@@ -141,6 +142,7 @@ jobs:
   aws-build-hotfix:
     if: ${{ github.event.inputs.action == 'Start' && github.event.inputs.type == 'Hotfix' }}
     needs: new-release
+    runs-on: ubuntu-latest
     #uses: ./.github/workflows/aws-build-workflow.yml
     steps:
      - run: echo "build hotfix"
@@ -162,6 +164,7 @@ jobs:
   aws-build-master:
     if: ${{ github.event.inputs.action == 'Finish' }}
     needs: new-release
+    runs-on: ubuntu-latest
     steps:
      - run: echo "build master"
     #uses: ./.github/workflows/aws-build-workflow.yml
@@ -184,6 +187,7 @@ jobs:
   update-version:
     if: ${{ always() && contains(join(needs.*.result, ','), 'success') }}
     needs: [aws-build-master, aws-build-develop, aws-build-hotfix]
+    runs-on: ubuntu-latest
     steps:
      - run: echo "update list"
     #uses: ./.github/workflows/aws-update-image-version.yml
