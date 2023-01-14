@@ -18,20 +18,34 @@
 
 	<build>
 		<plugins>
-		    <plugin>
-            <groupId>com.amashchenko.maven.plugin</groupId>
-            <artifactId>gitflow-maven-plugin</artifactId>
-            <version>1.19.0</version>
-           <configuration>
-    			<installProject>false</installProject>
-    			<verbose>true</verbose>
-
-				<gitFlowConfig>
-					<productionBranch>main</productionBranch>
-					<developmentBranch>develop</developmentBranch>
-				</gitFlowConfig>
-		   </configuration>
-        </plugin>
+			<plugin>
+				<groupId>com.amashchenko.maven.plugin</groupId>
+				<artifactId>gitflow-maven-plugin</artifactId>
+				<version>1.18.0</version>
+				<configuration>
+					<commitDevelopmentVersionAtStart>true</commitDevelopmentVersionAtStart>
+					<installProject>false</installProject>
+					<verbose>true</verbose>
+					<keepBranch>false</keepBranch>
+					<skipTestProject>true</skipTestProject>
+					<pushRemote>true</pushRemote>
+					<useSnapshotInHotfix>true</useSnapshotInHotfix>
+					<useSnapshotInRelease>true</useSnapshotInRelease>
+					<noBackMergeHotfix>true</noBackMergeHotfix>
+					<gitFlowConfig>
+						<productionBranch>main</productionBranch>
+						<developmentBranch>develop</developmentBranch>
+						<featureBranchPrefix>feature/</featureBranchPrefix>
+						<releaseBranchPrefix>release/</releaseBranchPrefix>
+						<hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
+						<versionTagPrefix>${project.artifactId}-</versionTagPrefix>
+						<origin>origin</origin>
+					</gitFlowConfig>
+					<commitMessages>
+						<!-- since 1.2.1, see Customizing commit messages -->
+					</commitMessages>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>com.amashchenko.maven.plugin</groupId>
 				<artifactId>gitflow-maven-plugin</artifactId>
