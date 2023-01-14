@@ -26,7 +26,7 @@
 					<commitDevelopmentVersionAtStart>true</commitDevelopmentVersionAtStart>
 					<installProject>false</installProject>
 					<verbose>true</verbose>
-					<keepBranch>true</keepBranch>
+					<keepBranch>false</keepBranch>
 					<skipTestProject>true</skipTestProject>
 					<pushRemote>true</pushRemote>
 					<useSnapshotInHotfix>true</useSnapshotInHotfix>
