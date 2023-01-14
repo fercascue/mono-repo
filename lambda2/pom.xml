@@ -38,7 +38,7 @@
 						<featureBranchPrefix>feature/</featureBranchPrefix>
 						<releaseBranchPrefix>release/</releaseBranchPrefix>
 						<hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
-						<versionTagPrefix>v-${project.artifactId}-</versionTagPrefix>
+						<versionTagPrefix>v-${project.version}-</versionTagPrefix>
 						<origin>origin</origin>
 					</gitFlowConfig>
 					<commitMessages>
