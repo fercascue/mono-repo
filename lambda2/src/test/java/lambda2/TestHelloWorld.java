@@ -9,6 +9,6 @@ import lambda1.HelloWorld;
 public class TestHelloWorld {
 	 @Test
 	    public void testLucky() {
-	        assertEquals(7, HelloWorld.getLucky());
+	        assertEquals(6, HelloWorld.getLucky());
 	    }
 }

@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.totalenergies</groupId>
 	<artifactId>lambda2</artifactId>
-	<version>0.0.5</version>
+	<version>0.0.6</version>
 
 	<dependencies>
 		<!-- junit 5, unit test -->
@@ -38,7 +38,7 @@
 						<featureBranchPrefix>feature/</featureBranchPrefix>
 						<releaseBranchPrefix>release/</releaseBranchPrefix>
 						<hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
-						<versionTagPrefix>${project.artifactId}-</versionTagPrefix>
+						<versionTagPrefix>v-${project.artifactId}-</versionTagPrefix>
 						<origin>origin</origin>
 					</gitFlowConfig>
 					<commitMessages>
