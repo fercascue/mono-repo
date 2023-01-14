@@ -128,7 +128,7 @@ jobs:
         id: get_commits
         if: ${{ github.event.inputs.action == 'Start' && github.event.inputs.type == 'Release' }}
         run: |
-            git log ${{ env.NEW_CONFIG }}..HEAD --reverse --no-merges --pretty=format:"%h - %an, %ar : %s"
+            git log v-${{ env.OLD_CONFIG }}..HEAD --reverse --no-merges --pretty=format:"%h - %an, %ar : %s"
 
       - name: Create Release page
         id: create_release_github
