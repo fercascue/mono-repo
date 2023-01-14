@@ -28,6 +28,10 @@ jobs:
   new-release:
     name: "Create release branch and PRs into develop/master"
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: "lambda2"
     outputs:
       app-version: ${{ steps.get-version.outputs.version }}
       hotfix-version: ${{ env.hotfix-version }}
@@ -43,7 +47,7 @@ jobs:
         uses: actions/checkout@v2
         if: ${{ github.event.inputs.type == 'Hotfix'}}
         with:
-          ref: master
+          ref: main
       
       - name: Release Start
         if: ${{ github.event.inputs.type == 'Release' && github.event.inputs.action == 'Start' }}
@@ -125,7 +129,30 @@ jobs:
         env:
           REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
         run: echo "config release"
-      
+
+
+      - name: Check for modified files
+        id: git-check
+        run: |
+          if git diff-index --quiet HEAD
+          then
+            modified="false"
+          else
+            modified="true"
+          fi
+          #if git diff-index --quiet HEAD --; then echo "false"; else echo "true"; fi
+          echo "modified=$modified" >> $GITHUB_ENV
+         
+      - name: Auto Commit to Generate File
+        if: ${{ env.modified == 'true' }}
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+         
+          git add -A
+          git commit -a -m "#Github-BOT# Automated Change to add new version in the version dropdown list"
+          git push  
+       
                
 ## Push the docker image into ECR QUA [PROD and PREPROD using AWS Cross Account Replication] ##
   aws-build-develop:
@@ -201,3 +228,4 @@ jobs:
     #    PACKAGE_S3_BUCKET_NAME: ${{ secrets.PACKAGE_S3_BUCKET_NAME }}
     #    GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
     #    TEAMS_WEBHOOK: ${{ secrets.TEAMS_WEBHOOK }}
+
