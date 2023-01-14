@@ -130,6 +130,7 @@ jobs:
           REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
         run: echo "config release"
 
+
       - name: Check for modified files
         id: git-check
         run: |
@@ -151,5 +152,80 @@ jobs:
           git add -A
           git commit -a -m "#Github-BOT# Automated Change to add new version in the version dropdown list"
           git push  
-      
- 
+       
+               
+## Push the docker image into ECR QUA [PROD and PREPROD using AWS Cross Account Replication] ##
+  aws-build-develop:
+    if: ${{ github.event.inputs.action == 'Start' && github.event.inputs.type == 'Release' }}
+    runs-on: ubuntu-latest
+    needs: new-release
+    #uses: ./.github/workflows/aws-build-workflow.yml
+    #with:
+    #  env: 'QUA'
+    #  branch-name: 'develop'
+    steps:
+     - run: echo "build develop"
+  
+  aws-build-hotfix:
+    if: ${{ github.event.inputs.action == 'Start' && github.event.inputs.type == 'Hotfix' }}
+    runs-on: ubuntu-latest
+    needs: new-release
+    #uses: ./.github/workflows/aws-build-workflow.yml
+    steps:
+     - run: echo "build hotfix"
+    #with:
+     # env: 'QUA'
+     # branch-name: 'hotfix/${{needs.new-release.outputs.hotfix-version}}'
+    #secrets:
+    #    AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #    AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #    AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+    #    ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+    #    PACKAGE_S3_BUCKET_NAME: ${{ secrets.PACKAGE_S3_BUCKET_NAME }}
+    #    USER_NAME: ${{ secrets.USER_NAME }}
+    #    ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+    #    TEAMS_WEBHOOK: ${{ secrets.TEAMS_WEBHOOK }}
+    #    SONAR_TOKEN: ${{ secrets.SONARQUBE_SCAN_TOKEN }}
+    #    SONAR_HOST_URL: ${{ secrets.SONAR_URL }}
+  
+  aws-build-master:
+    if: ${{ github.event.inputs.action == 'Finish' }}
+    runs-on: ubuntu-latest
+    needs: new-release
+    steps:
+     - run: echo "build master"
+    #uses: ./.github/workflows/aws-build-workflow.yml
+    #with:
+     # env: 'QUA'
+     # branch-name: 'master'
+    #secrets:
+     #   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+     #   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+     #   AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+     #   ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+     #   PACKAGE_S3_BUCKET_NAME: ${{ secrets.PACKAGE_S3_BUCKET_NAME }}
+     #   USER_NAME: ${{ secrets.USER_NAME }}
+     #   ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+     #   TEAMS_WEBHOOK: ${{ secrets.TEAMS_WEBHOOK }}
+     #   SONAR_TOKEN: ${{ secrets.SONARQUBE_SCAN_TOKEN }}
+     #   SONAR_HOST_URL: ${{ secrets.SONAR_URL }}
+        
+## Update dropdown list values by adding the new version ##
+  update-version:
+    if: ${{ always() && contains(join(needs.*.result, ','), 'success') }}
+    runs-on: ubuntu-latest
+    needs: [aws-build-master, aws-build-develop, aws-build-hotfix]
+    steps:
+     - run: echo "update list"
+    #uses: ./.github/workflows/aws-update-image-version.yml
+    #with:
+    #  environment: 'QUA'
+    #secrets:
+    #    AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #    AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #    AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+    #    ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+    #    PACKAGE_S3_BUCKET_NAME: ${{ secrets.PACKAGE_S3_BUCKET_NAME }}
+    #    GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+    #    TEAMS_WEBHOOK: ${{ secrets.TEAMS_WEBHOOK }}
+
