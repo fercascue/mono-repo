@@ -128,7 +128,8 @@ jobs:
         id: get_commits
         if: ${{ github.event.inputs.action == 'Start' && github.event.inputs.type == 'Release' }}
         run: |
-            git log v-${{ env.OLD_CONFIG }}..HEAD --reverse --no-merges --pretty=format:"%h - %an, %ar : %s"
+            echo "CONTENT=$(git log v-${{ env.OLD_CONFIG }}..HEAD --reverse --no-merges --pretty=format:"%h - %an, %ar : %s")" >> $GITHUB_ENV
+            
 
       - name: Create Release page
         id: create_release_github
@@ -141,8 +142,7 @@ jobs:
           release_name: Release ${{ env.NEW_CONFIG }}
           body: |
             Changes in this Release
-            - First Change
-            - Second Change
+             ${{ env.CONTENT }}
           draft: false
           prerelease: false
 
