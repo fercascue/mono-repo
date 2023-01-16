@@ -129,8 +129,8 @@ jobs:
         id: get_commits
         if: ${{ github.event.inputs.action == 'Start' && github.event.inputs.type == 'Release' }}
         run: |
-           chmod +x ./.github/workflows/git-changelog.sh
-           echo "log_changes=$(./.github/workflows/git-changelog.sh -t=v-${{ env.NEW_CONFIG }})" >> $GITHUB_OUTPUT
+           chmod +x ../.github/workflows/git-changelog.sh
+           echo "log_changes=$(../.github/workflows/git-changelog.sh -t=v-${{ env.NEW_CONFIG }})" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Create Release page
