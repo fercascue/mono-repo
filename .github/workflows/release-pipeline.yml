@@ -25,6 +25,7 @@ on:
         - Finish
  
 jobs:
+  
   new-release:
     name: "Create release branch and PRs into develop/master"
     runs-on: ubuntu-latest
@@ -123,12 +124,14 @@ jobs:
           oldVersionConfig=${oldVersion%-*}
           echo "NEW_CONFIG=$newVersionConfig" >> $GITHUB_ENV
           echo "OLD_CONFIG=$oldVersionConfig" >> $GITHUB_ENV
-
+      
       - name: Get commits 
         id: get_commits
         if: ${{ github.event.inputs.action == 'Start' && github.event.inputs.type == 'Release' }}
         run: |
-            git log v-${{ env.NEW_CONFIG }}..HEAD --reverse --no-merges --pretty=format:"%h - %an, %ar : %s"
+           chmod +x ./.github/workflows/git-changelog.sh
+           echo "log_changes=$(./.github/workflows/git-changelog.sh -t=v-${{ env.NEW_CONFIG }})" >> $GITHUB_OUTPUT
+        shell: bash
 
       - name: Create Release page
         id: create_release_github
@@ -139,10 +142,7 @@ jobs:
         with:
           tag_name: v-${{ env.NEW_CONFIG }}
           release_name: Release ${{ env.NEW_CONFIG }}
-          body: |
-            Changes in this Release
-            - First Change
-            - Second Change
+          body: ${{ env.log_changes }}|
           draft: false
           prerelease: false
 
