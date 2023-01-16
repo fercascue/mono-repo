@@ -130,7 +130,7 @@ jobs:
         if: ${{ github.event.inputs.action == 'Start' && github.event.inputs.type == 'Release' }}
         run: |
            chmod +x ../.github/workflows/git-changelog.sh
-           echo "log_changes=$(../.github/workflows/git-changelog.sh -t=v-${{ env.OLD_CONFIG }})<<EOF" >> $GITHUB_OUTPUT
+           ../.github/workflows/git-changelog.sh -t=v-${{ env.OLD_CONFIG }}
         shell: bash
 
       - name: Create Release page
@@ -142,7 +142,7 @@ jobs:
         with:
           tag_name: v-${{ env.NEW_CONFIG }}
           release_name: Release ${{ env.NEW_CONFIG }}
-          body: ${{ env.log_changes }}|
+          body: ${{ cat ./gitlog.md }}|
           draft: false
           prerelease: false
 
