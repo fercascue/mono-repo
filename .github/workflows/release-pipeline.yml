@@ -131,7 +131,6 @@ jobs:
         if: ${{ github.event.inputs.action == 'Start' && github.event.inputs.type == 'Release' }}
         run: |
            chmod +x ../.github/workflows/git-changelog.sh
-           ../.github/workflows/git-changelog.sh -t=v-${{ env.OLD_CONFIG }}
            echo "file_changes=$(../.github/workflows/git-changelog.sh -t=v-${{ env.OLD_CONFIG }})" >> $GITHUB_OUTPUT
         shell: bash
 
