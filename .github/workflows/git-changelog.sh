@@ -70,4 +70,3 @@ git-log-to-markdown () {
 }
 
 git-log-to-markdown "$@" > ./gitlog.md
-cat ./gitlog.md
