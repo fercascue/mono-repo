@@ -140,7 +140,7 @@ jobs:
       - name: Create Release page
         id: create_release_github
         if: ${{ github.event.inputs.action == 'Start' && github.event.inputs.type == 'Release' }}
-        uses: actions/github-script@4.0.2
+        uses: actions/github-script@v6
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
           script: |
