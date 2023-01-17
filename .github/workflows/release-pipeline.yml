@@ -140,16 +140,15 @@ jobs:
       - name: Create Release page
         id: create_release_github
         if: ${{ github.event.inputs.action == 'Start' && github.event.inputs.type == 'Release' }}
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        uses: actions/github-script@4.0.2
         with:
-          tag_name: v-${{ env.NEW_CONFIG }}
-          release_name: Release ${{ env.NEW_CONFIG }}
-          body: echo $(cat ./gitlog.md)
-          draft: false
-          prerelease: false
-
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+          script: |
+            await github.request (`POST /repos/${{ github.repository }}/releases`, {
+              tag_name: "${{ env.NEW_CONFIG }}",
+              generate_release_notes: true
+            });
+        
       - name: Create configuration for new version
         if: ${{ github.event.inputs.action == 'Start' }}
         env:
