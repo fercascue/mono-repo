@@ -146,9 +146,7 @@ jobs:
         with:
           tag_name: v-${{ env.NEW_CONFIG }}
           release_name: Release ${{ env.NEW_CONFIG }}
-          body: |
-              test
-              bar
+          body: echo $(cat ./gitlog.md)
           draft: false
           prerelease: false
 
