@@ -36,6 +36,7 @@ jobs:
     outputs:
       app-version: ${{ steps.get-version.outputs.version }}
       hotfix-version: ${{ env.hotfix-version }}
+      file_changes: ${{ steps.get-commits.outputs.file_changes }}
     steps:
            
       - name: Checkout develop for ${{ github.event.inputs.type }}
@@ -126,13 +127,17 @@ jobs:
           echo "OLD_CONFIG=$oldVersionConfig" >> $GITHUB_ENV
       
       - name: Get commits 
-        id: get_commits
+        id: get-commits
         if: ${{ github.event.inputs.action == 'Start' && github.event.inputs.type == 'Release' }}
         run: |
            chmod +x ../.github/workflows/git-changelog.sh
            ../.github/workflows/git-changelog.sh -t=v-${{ env.OLD_CONFIG }}
+           echo "file_changes=$(../.github/workflows/git-changelog.sh -t=v-${{ env.OLD_CONFIG }})" >> $GITHUB_OUTPUT
         shell: bash
 
+      - name: Print values 
+        run: echo ${{ steps.get-commits.outputs.file_changes}}
+         
       - name: Create Release page
         id: create_release_github
         if: ${{ github.event.inputs.action == 'Start' && github.event.inputs.type == 'Release' }}
@@ -142,7 +147,9 @@ jobs:
         with:
           tag_name: v-${{ env.NEW_CONFIG }}
           release_name: Release ${{ env.NEW_CONFIG }}
-          body: ${{ cat ./gitlog.md }}|
+          body: |
+              test
+              bar
           draft: false
           prerelease: false
 
