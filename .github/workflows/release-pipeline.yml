@@ -25,6 +25,7 @@ on:
         - Finish
  
 jobs:
+  
   new-release:
     name: "Create release branch and PRs into develop/master"
     runs-on: ubuntu-latest
@@ -35,6 +36,7 @@ jobs:
     outputs:
       app-version: ${{ steps.get-version.outputs.version }}
       hotfix-version: ${{ env.hotfix-version }}
+      file_changes: ${{ steps.get-commits.outputs.file_changes }}
     steps:
            
       - name: Checkout develop for ${{ github.event.inputs.type }}
@@ -123,29 +125,19 @@ jobs:
           oldVersionConfig=${oldVersion%-*}
           echo "NEW_CONFIG=$newVersionConfig" >> $GITHUB_ENV
           echo "OLD_CONFIG=$oldVersionConfig" >> $GITHUB_ENV
-
-      - name: Get commits 
-        id: get_commits
-        if: ${{ github.event.inputs.action == 'Start' && github.event.inputs.type == 'Release' }}
-        run: |
-            git log v-0.0.8..HEAD --reverse --no-merges --pretty=format:"%h - %an, %ar : %s"
-
+      
       - name: Create Release page
         id: create_release_github
         if: ${{ github.event.inputs.action == 'Start' && github.event.inputs.type == 'Release' }}
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        uses: actions/github-script@v6
         with:
-          tag_name: v-${{ env.NEW_CONFIG }}
-          release_name: Release ${{ env.NEW_CONFIG }}
-          body: |
-            Changes in this Release
-            - First Change
-            - Second Change
-          draft: false
-          prerelease: false
-
+          github-token: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+          script: |
+            await github.request (`POST /repos/${{ github.repository }}/releases`, {
+              tag_name: "${{ env.NEW_CONFIG }}",
+              generate_release_notes: true
+            });
+        
       - name: Create configuration for new version
         if: ${{ github.event.inputs.action == 'Start' }}
         env:
