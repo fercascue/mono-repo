@@ -131,11 +131,11 @@ jobs:
         if: ${{ github.event.inputs.action == 'Start' && github.event.inputs.type == 'Release' }}
         run: |
            chmod +x ../.github/workflows/git-changelog.sh
-           echo "file_changes=$(../.github/workflows/git-changelog.sh -t=v-${{ env.OLD_CONFIG }})" >> $GITHUB_OUTPUT
+           ../.github/workflows/git-changelog.sh -t=v-${{ env.OLD_CONFIG }}
         shell: bash
 
       - name: Print values 
-        run: echo ${{ steps.get-commits.outputs.file_changes}}
+        run: echo $(cat ./gitlog.md)
          
       - name: Create Release page
         id: create_release_github
