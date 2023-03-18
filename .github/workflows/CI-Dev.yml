@@ -9,7 +9,7 @@ on:
   push:
     branches:
       - "feature*"
-    
+      - quality
     paths:
       - 'lambda1/**'
       - 'lambda2/**'
