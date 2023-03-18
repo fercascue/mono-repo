@@ -13,6 +13,12 @@ jobs:
     - uses: JulienKode/pull-request-name-linter-action@v0.5.0
       with:
         configuration-path: ./.github/workflows/commitlint.config.js
+    - name: Create comment
+      uses: peter-evans/create-or-update-comment@v2
+      with:
+        issue-number: ${{ github.event.pull_request.number }}
+        body: github-actions[bot] approves this pull request comment
+        reactions: rocket
   build:
     runs-on: ubuntu-latest
     steps:
